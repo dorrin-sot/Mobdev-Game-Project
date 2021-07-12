@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
+
+  final keyApplicationId = dotenv.env['keyApplicationId'];
+  final keyParseServerUrl = dotenv.env['keyParseServerUrl'];
+  final keyClientKey = dotenv.env['keyClientKey'];
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, debug: true);
 
   runApp(MyApp());
 }
