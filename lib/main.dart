@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:mobdev_game_project/views/subject_page.dart';
+import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'models/question.dart';
