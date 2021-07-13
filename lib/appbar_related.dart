@@ -67,12 +67,13 @@ class HeartIndicator extends StatelessWidget {
               width: 40,
               height: 40,
               child: Center(
-                child: Text(
-                  Get.find<HeartController>().hearts.toString(),
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.red.shade900,
-                    fontWeight: FontWeight.bold,
+                child: FittedBox(
+                  child: Text(
+                    Get.find<HeartController>().hearts.toString(),
+                    style: TextStyle(
+                      color: Colors.red.shade900,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -156,7 +157,6 @@ class MoneyIndicator extends StatelessWidget {
                 child: Text(
                   Get.find<MoneyController>().money.toString(),
                   style: TextStyle(
-                    fontSize: 25,
                     color: Colors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ),
