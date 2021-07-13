@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mobdev_game_project/views/subject_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'models/question.dart';
@@ -33,5 +34,7 @@ Future main() async {
 class GameApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) => Container();
+  Widget build(BuildContext context) => Container(
+        child: SubjectPage(),
+      );
 }
