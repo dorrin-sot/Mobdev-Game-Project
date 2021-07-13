@@ -34,7 +34,10 @@ Future main() async {
 class GameApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) => Container(
-        child: SubjectPage(),
+  Widget build(BuildContext context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          child: SubjectPage(),
+        ),
       );
 }
