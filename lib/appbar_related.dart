@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:mobdev_game_project/misc/custom_icons_icons.dart';
 import 'package:mobdev_game_project/models/app_controller.dart';
 import 'package:mobdev_game_project/models/user.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -29,7 +32,9 @@ class CustomAppbar extends AppBar {
   static Widget signedIn({required User currentUser}) => Row(
         children: [
           HeartIndicator(currentUser: currentUser),
+          Spacer(),
           MoneyIndicator(currentUser: currentUser),
+          Spacer(),
           PointsIndicator(currentUser: currentUser)
         ],
       );
@@ -51,8 +56,9 @@ class HeartIndicator extends StatelessWidget {
         child: Stack(
           children: [
             LiquidCustomProgressIndicator(
-              value: 1 - Get.find<HeartController>().minutesTillNext / 20,
-              valueColor: AlwaysStoppedAnimation(Colors.redAccent),
+              // value: 1 - Get.find<HeartController>().minutesTillNext / 20,
+              value: 0.4,
+              valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
               backgroundColor: Colors.white70,
               direction: Axis.vertical,
               shapePath: getHeartPath(Size(40, 40)),
@@ -64,8 +70,8 @@ class HeartIndicator extends StatelessWidget {
                 child: Text(
                   Get.find<HeartController>().hearts.toString(),
                   style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.indigo,
+                    fontSize: 25,
+                    color: Colors.red.shade900,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -111,8 +117,13 @@ class HeartController extends GetxController {
     update();
   }
 
-  decrementMinutesTillNext() {
-    minutesTillNext--;
+  incrementHearts() {
+    hearts = min(User.HEARTS_MAX, hearts + 1);
+    update();
+  }
+
+  decrementHearts() {
+    hearts = max(0, hearts - 1);
     update();
   }
 }
@@ -124,7 +135,66 @@ class MoneyIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final c = MoneyController(currentUser.money);
+    Get.put(c);
+
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: Center(
+        child: Stack(
+          children: [
+            Center(
+              child: Icon(
+                CustomIcons.coins,
+                size: 35,
+                color: Colors.yellow.shade200,
+              ),
+            ),
+            Center(
+              child: FittedBox(
+                child: Text(
+                  Get.find<MoneyController>().money.toString(),
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.deepOrange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // return TextButton.icon(
+    //   onPressed: null,
+    //   icon: Icon(
+    //     Icons.attach_money,
+    //     color: Colors.yellow,
+    //     size: 40,
+    //   ),
+    //   label: Text(
+    //     Get.find<MoneyController>().money.toString(),
+    //     style: TextStyle(
+    //       fontSize: 30,
+    //       color: Colors.indigo,
+    //       fontWeight: FontWeight.bold,
+    //     ),
+    //   ),
+    // );
+  }
+}
+
+class MoneyController extends GetxController {
+  int money;
+
+  MoneyController(this.money);
+
+  addMoney(int amount) {
+    money = max(money + amount, 0);
+    update();
   }
 }
 
