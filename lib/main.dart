@@ -37,7 +37,10 @@ class GameApp extends StatelessWidget {
   Widget build(BuildContext context) => Directionality(
         textDirection: TextDirection.rtl,
         child: Container(
-          child: SubjectPage(),
+          child: ElevatedButton(
+            child: Text("کلیک بنمای"),
+            onPressed: () => Get.to(SubjectPage()),
+          ),
         ),
       );
 }

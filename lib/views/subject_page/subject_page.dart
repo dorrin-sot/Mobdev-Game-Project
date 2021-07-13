@@ -9,38 +9,44 @@ class SubjectPage extends StatelessWidget {
   //todo fix fetching async data
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Subject Page')),
-      body: Container(
-          child: GetX<SubjectPageController>(
-              init: SubjectPageController(),
-              builder: (controller) {
-                if ((controller.subjects() as List<String>).length == 0) {
-                  return LoadingSupportPage();
-                } else {
-                  return Column(children: [
-                    Expanded(
-                      child: Padding(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+            child: GetX<SubjectPageController>(
+                init: SubjectPageController(),
+                builder: (controller) {
+                  if ((controller.subjects() as List<String>).length == 0) {
+                    return LoadingSupportPage();
+                  } else {
+                    return Column(children: [
+                      Expanded(
+                        child: Padding(
                           padding: EdgeInsets.only(
                             top: 4,
                             bottom: 4,
                           ),
-                          child: Text("لطفا یکیرو انتخاب کن")),
-                      flex: 1,
-                    ),
-                    Expanded(
-                      flex: 9,
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        children: controller.subjects().map<Widget>((subject) {
-                          return Subject(subject);
-                        }).toList(),
-                        // children: ccc.map((e) => Text(e)).toList(),
+                          child: Center(
+                            child: Text("لطفا یکیرو انتخاب کن"),
+                          ),
+                        ),
+                        flex: 1,
                       ),
-                    ),
-                  ]);
-                }
-              })),
+                      Expanded(
+                        flex: 9,
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3,
+                          children:
+                              controller.subjects().map<Widget>((subject) {
+                            return SubjectWidget(subject);
+                          }).toList(),
+                          // children: ccc.map((e) => Text(e)).toList(),
+                        ),
+                      ),
+                    ]);
+                  }
+                })),
+      ),
     );
   }
 }
