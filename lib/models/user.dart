@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mobdev_game_project/models/app_controller.dart';
+import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -31,7 +31,39 @@ class User extends ParseUser {
       if (response.success) {
         final c = Get.find<AppController>();
         c.isLoggedIn = true;
+        c.currentUser = this;
         c.update();
+      }
+      return response;
+    });
+  }
+
+  @override
+  Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
+    return await super
+        .logout(deleteLocalUserData: deleteLocalUserData)
+        .then((response) {
+      if (response.success) {
+        final c = Get.find<AppController>();
+        c.isLoggedIn = false;
+        c.currentUser = null;
+        c.update();
+      }
+      return response;
+    });
+  }
+
+  @override
+  Future<ParseResponse> signUp(
+      {bool allowWithoutEmail = false,
+      bool doNotSendInstallationID = false}) async {
+    return await super
+        .signUp(
+            allowWithoutEmail: allowWithoutEmail,
+            doNotSendInstallationID: doNotSendInstallationID)
+        .then((response) {
+      if (response.success) {
+        login(); // also login after signup
       }
       return response;
     });

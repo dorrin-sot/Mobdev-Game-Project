@@ -1,7 +1,9 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mobdev_game_project/pages/accounts.dart';
+import 'package:mobdev_game_project/pages/home.dart';
+import 'package:mobdev_game_project/pages/settings.dart';
 import 'package:mobdev_game_project/appbar_related.dart';
 import 'package:mobdev_game_project/models/app_controller.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
@@ -31,43 +33,40 @@ Future main() async {
           User(username, password),
       debug: true);
 
-  Get.put(AppController());
+  final c = AppController();
+  Get.put(c);
+  // fixme remove below when login page is added
+  User("test", "test").login();
+  // end fixme remove below when login page is added
 
-  runApp(GetMaterialApp(home: GameApp()));
+  runApp(GetMaterialApp(
+    initialRoute: '/home',
+    getPages: [
+      GetPage(
+          name: '/home',
+          page: () => HomePage(),
+          transition: Transition.noTransition),
+      GetPage(
+          name: '/settings',
+          page: () => SettingsPage(),
+          transition: Transition.noTransition),
+      GetPage(
+          name: '/account/profile',
+          page: () => AccountsPageProfile(),
+          transition: Transition.noTransition),
+      GetPage(
+          name: '/account/login',
+          page: () => AccountsPageLogin(),
+          transition: Transition.noTransition),
+      GetPage(
+          name: '/account/register',
+          page: () => AccountsPageRegister(),
+          transition: Transition.noTransition),
+    ],
+  ));
 }
 
-class GameApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    // fixme remove below when login page is added
-    final c = Get.find<AppController>();
-    User("test", "test").login();
-    c.update();
-    // end fixme remove below when login page is added
-
-
-    return Scaffold(
-      appBar: CustomAppbar.build(),
-      bottomNavigationBar: CustomBottomNavBar(),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Container(
-          child: ElevatedButton(
-            child: Text("کلیک بنمای"),
-            onPressed: () => Get.to(SubjectPage()),
-          ),
-        ),
-      ),
-      backgroundColor: Colors.white,
-    );
-  }
-}
-
-class CustomBottomNavBar extends CurvedNavigationBar {
-  CustomBottomNavBar()
-      : super(items: [
-          Icon(Icons.eighteen_mp)
-          // todo
-        ]);
+class AppController extends GetxController {
+  bool? isLoggedIn;
+  User? currentUser;
 }

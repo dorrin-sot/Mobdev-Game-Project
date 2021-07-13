@@ -4,49 +4,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/misc/custom_icons_icons.dart';
-import 'package:mobdev_game_project/models/app_controller.dart';
 import 'package:mobdev_game_project/models/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class CustomAppbar extends AppBar {
   static AppBar build() {
     return AppBar(
       title: GetBuilder<AppController>(
-        builder: (c) => FutureBuilder<User>(
-          future:
-              ParseUser.currentUser().then((parseUser) => parseUser as User),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData ||
-                snapshot.hasError ||
-                snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Quiz boy 9000');
-            }
-            return signedIn(currentUser: snapshot.data!);
-          },
-        ),
+        builder: (c) {
+          if (c.isLoggedIn == null || !c.isLoggedIn!) {
+            return const Text('Quiz boy 9000');
+          } else {
+            return signedIn();
+          }
+        },
       ),
     );
   }
 
-  static Widget signedIn({required User currentUser}) => Row(
+  static Widget signedIn() => Row(
         children: [
-          HeartIndicator(currentUser: currentUser),
+          HeartIndicator(),
           Spacer(),
-          MoneyIndicator(currentUser: currentUser),
+          MoneyIndicator(),
           Spacer(),
-          PointsIndicator(currentUser: currentUser)
+          PointsIndicator()
         ],
       );
 }
 
 class HeartIndicator extends StatelessWidget {
-  final User currentUser;
-
-  const HeartIndicator({required this.currentUser, Key? key}) : super(key: key);
+  const HeartIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    User currentUser = Get.find<AppController>().currentUser!;
+
     final c = HeartController(currentUser.minutesTillNext, currentUser.hearts);
     Get.put(c);
 
@@ -128,12 +122,12 @@ class HeartController extends GetxController {
 }
 
 class MoneyIndicator extends StatelessWidget {
-  final User currentUser;
-
-  const MoneyIndicator({Key? key, required this.currentUser}) : super(key: key);
+  const MoneyIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    User currentUser = Get.find<AppController>().currentUser!;
+
     final c = MoneyController(currentUser.money);
     Get.put(c);
 
@@ -179,13 +173,13 @@ class MoneyController extends GetxController {
 }
 
 class PointsIndicator extends StatelessWidget {
-  final User currentUser;
-
-  const PointsIndicator({Key? key, required this.currentUser})
+  const PointsIndicator({Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    User currentUser = Get.find<AppController>().currentUser!;
+
     final c = PointController(currentUser.points);
     Get.put(c);
 
