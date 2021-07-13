@@ -51,29 +51,27 @@ class HeartIndicator extends StatelessWidget {
     Get.put(c);
 
     return SizedBox(
-        width: 40,
-        height: 40,
+        width: 42.5,
+        height: 42.5,
         child: Stack(
           children: [
-            LiquidCustomProgressIndicator(
-              // value: 1 - Get.find<HeartController>().minutesTillNext / 20,
-              value: 0.4,
-              valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
-              backgroundColor: Colors.white70,
-              direction: Axis.vertical,
-              shapePath: getHeartPath(Size(40, 40)),
+            Center(
+              child: LiquidCustomProgressIndicator(
+                value: 1 - Get.find<HeartController>().minutesTillNext / 20,
+                valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
+                backgroundColor: Colors.white70,
+                direction: Axis.vertical,
+                shapePath: getHeartPath(Size(42.5, 42.5)),
+              ),
             ),
-            SizedBox(
-              width: 40,
-              height: 40,
-              child: Center(
-                child: FittedBox(
-                  child: Text(
-                    Get.find<HeartController>().hearts.toString(),
-                    style: TextStyle(
-                      color: Colors.red.shade900,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Center(
+              child: FittedBox(
+                child: Text(
+                  Get.find<HeartController>().hearts.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.red.shade900,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -142,48 +140,30 @@ class MoneyIndicator extends StatelessWidget {
     return SizedBox(
       width: 40,
       height: 40,
-      child: Center(
-        child: Stack(
-          children: [
-            Center(
-              child: Icon(
-                CustomIcons.coins,
-                size: 35,
-                color: Colors.yellow.shade200,
-              ),
+      child: Stack(
+        children: [
+          Center(
+            child: Icon(
+              CustomIcons.coins,
+              size: 35,
+              color: Colors.yellow.shade200,
             ),
-            Center(
-              child: FittedBox(
-                child: Text(
-                  Get.find<MoneyController>().money.toString(),
-                  style: TextStyle(
-                    color: Colors.deepOrange,
-                    fontWeight: FontWeight.bold,
-                  ),
+          ),
+          Center(
+            child: FittedBox(
+              child: Text(
+                Get.find<MoneyController>().money.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.deepOrange,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
-
-    // return TextButton.icon(
-    //   onPressed: null,
-    //   icon: Icon(
-    //     Icons.attach_money,
-    //     color: Colors.yellow,
-    //     size: 40,
-    //   ),
-    //   label: Text(
-    //     Get.find<MoneyController>().money.toString(),
-    //     style: TextStyle(
-    //       fontSize: 30,
-    //       color: Colors.indigo,
-    //       fontWeight: FontWeight.bold,
-    //     ),
-    //   ),
-    // );
   }
 }
 
@@ -206,6 +186,41 @@ class PointsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final c = PointController(currentUser.points);
+    Get.put(c);
+
+    return SizedBox(
+      width: 42.5,
+      height: 42.5,
+      child: Stack(
+        children: [
+          Center(
+            child: Icon(
+              Icons.star,
+              size: 42.5,
+              color: Colors.yellow,
+            ),
+          ),
+          Center(
+            child: FittedBox(
+              child: Text(
+                Get.find<PointController>().points.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.deepOrange.shade900,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+class PointController extends GetxController {
+  int points;
+
+  PointController(this.points);
 }
