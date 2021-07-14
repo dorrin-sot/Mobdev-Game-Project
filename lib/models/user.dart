@@ -96,6 +96,9 @@ class User extends ParseUser {
   set timeoutQs(List<Question> value) =>
       set<List<Question>>(keyTimeoutQs, value);
 
+  List<Question> get allQuestions =>
+      []..addAll(correctQs)..addAll(incorrectQs)..addAll(timeoutQs);
+
   DateTime get heartsLastUpdateTime => get<DateTime>(keyHeartsLastUpdateTime)!;
 
   set heartsLastUpdateTime(DateTime value) =>

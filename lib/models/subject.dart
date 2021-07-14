@@ -11,10 +11,6 @@ class Subject extends ParseObject {
   factory Subject.forParse(ParseObject parseObj) =>
       Subject(name: parseObj.get(keyName))..objectId = parseObj.objectId;
 
-  String get nameDB => get<String>(keyName)!;
-
-  set nameDB(String value) => set<String>(keyName, value);
-
   static Future<Subject> getFromDB(String subjectName) =>
       (QueryBuilder<ParseObject>(Subject())..whereEqualTo(keyName, subjectName))
           .first()!
