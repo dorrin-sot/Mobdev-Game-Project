@@ -4,9 +4,6 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/pages/accounts.dart';
 import 'package:mobdev_game_project/pages/home.dart';
 import 'package:mobdev_game_project/pages/settings.dart';
-import 'package:mobdev_game_project/appbar_related.dart';
-import 'package:mobdev_game_project/models/app_controller.dart';
-import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'models/question.dart';
