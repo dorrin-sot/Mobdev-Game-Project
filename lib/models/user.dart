@@ -69,6 +69,13 @@ class User extends ParseUser {
     });
   }
 
+  Future<bool> userExists(String username) async {
+    final q = QueryBuilder<ParseUser>(User(username, password))
+      ..whereEqualTo(keyUsername, username);
+    var response = await q.find();
+    return response.isNotEmpty;
+  }
+
   int get hearts => get<int>(keyHearts)!;
 
   set hearts(int value) => set<int>(keyHearts, value);
@@ -86,15 +93,21 @@ class User extends ParseUser {
   set correctQs(List<Question> value) =>
       set<List<Question>>(keyCorrectQs, value);
 
+  addCorrectQ(Question question) => getRelation(keyCorrectQs).add(question);
+
   List<Question> get incorrectQs => get<List<Question>>(keyIncorrectQs)!;
 
   set incorrectQs(List<Question> value) =>
       set<List<Question>>(keyIncorrectQs, value);
 
+  addIncorrectQ(Question question) => getRelation(keyIncorrectQs).add(question);
+
   List<Question> get timeoutQs => get<List<Question>>(keyTimeoutQs)!;
 
   set timeoutQs(List<Question> value) =>
       set<List<Question>>(keyTimeoutQs, value);
+
+  addTimeoutQs(Question question) => getRelation(keyTimeoutQs).add(question);
 
   List<Question> get allQuestions =>
       []..addAll(correctQs)..addAll(incorrectQs)..addAll(timeoutQs);
@@ -106,9 +119,10 @@ class User extends ParseUser {
 
   int get minutesTillNext {
     if (hearts == HEARTS_MAX) return 0;
-    return DateTime.now()
+    return DateTime
+        .now()
         .difference(
-            heartsLastUpdateTime.add(Duration(minutes: HEART_ADD_INTERVAL)))
+        heartsLastUpdateTime.add(Duration(minutes: HEART_ADD_INTERVAL)))
         .inMinutes;
   }
 
@@ -117,7 +131,10 @@ class User extends ParseUser {
 
     if (minutesTillNext >= HEART_ADD_INTERVAL) {
       final minutesPassed =
-          DateTime.now().difference(heartsLastUpdateTime).inMinutes;
+          DateTime
+              .now()
+              .difference(heartsLastUpdateTime)
+              .inMinutes;
 
       final numOfAddedHearts = (minutesPassed / HEART_ADD_INTERVAL) as int;
 
@@ -148,7 +165,9 @@ class User extends ParseUser {
       heartsLastUpdateTime = DateTime.now(); // start countdown from now
     } else {
       final minutesPassed =
-          heartsLastUpdateTime.difference(DateTime.now()).inMinutes;
+          heartsLastUpdateTime
+              .difference(DateTime.now())
+              .inMinutes;
       // set last update to remainder from last interval
       heartsLastUpdateTime = DateTime.now()
           .subtract(Duration(minutes: minutesPassed % HEART_ADD_INTERVAL));

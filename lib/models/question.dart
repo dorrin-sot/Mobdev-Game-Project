@@ -43,4 +43,26 @@ class Question extends ParseObject {
             .map((ParseObject p) => Question.forParse(p))
             .toList());
   }
+
+  // if answer is null means user ran out of time otherwise check if answer was correct
+  // returns if answer was correct or not as a bool (returns false if out of time)
+  bool answerQ({int? answer}) {
+    final c = Get.find<AppController>();
+    final curUser = c.currentUser!;
+    if (answer == null) {
+      curUser.addTimeoutQs(this);
+      save();
+      return false;
+    }
+
+    if (this.correctAns == answer) {
+      curUser.addCorrectQ(this);
+      save();
+      return true;
+    } else {
+      curUser.addIncorrectQ(this);
+      save();
+      return false;
+    }
+  }
 }
