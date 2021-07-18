@@ -6,6 +6,7 @@ import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/question.dart';
 import 'models/subject.dart';
@@ -74,8 +75,50 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class AppController extends GetxController {
   bool? isLoggedIn;
   User? currentUser;
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    await prefsOnInit();
+  }
+
+  prefsOnInit() async {
+    print('AppController::prefsOnInit');
+    final prefs = await SharedPreferences.getInstance();
+
+    bool? isLoggedInPref = prefs.getBool('isLoggedIn');
+
+    if (isLoggedInPref == null) {
+      prefs.setBool('isLoggedIn', false);
+    }
+
+    prefs.reload();
+    isLoggedInPref = prefs.getBool('isLoggedIn');
+    String? curUserUNPref = prefs.getString('curUserUN');
+    String? curUserPWPref = prefs.getString('curUserPW');
+
+    if (isLoggedInPref!) {
+      isLoggedIn = isLoggedInPref;
+      currentUser = User.forParse(
+        curUserUNPref!,
+        curUserPWPref!,
+      );
+      update();
+    }
+  }
+
+  prefsUpdate() async {
+    print('AppController::prefsUpdate');
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool('isLoggedIn', isLoggedIn!);
+
+    if (isLoggedIn!) {
+      prefs.setString('curUserUN', currentUser!.username!);
+      prefs.setString('curUserPW', currentUser!.password!);
+    }
+  }
 }

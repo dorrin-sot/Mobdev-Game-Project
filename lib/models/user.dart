@@ -44,6 +44,7 @@ class User extends ParseUser {
         final c = Get.find<AppController>();
         c.isLoggedIn = true;
         c.currentUser = this;
+        c.prefsUpdate();
         c.update();
       }
       return response;
@@ -78,6 +79,7 @@ class User extends ParseUser {
         final c = Get.find<AppController>();
         c.isLoggedIn = false;
         c.currentUser = null;
+        c.prefsUpdate();
         c.update();
       }
       return response;
