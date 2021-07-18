@@ -13,6 +13,9 @@ class Subject extends ParseObject {
 
   static Future<Subject> getFromDB(String subjectName) =>
       (QueryBuilder<ParseObject>(Subject())..whereEqualTo(keyName, subjectName))
-          .first()!
-          .then((parseObj) => Subject.forParse(parseObj));
+          .find()
+          .then((subjectList) {
+        assert(subjectList.isNotEmpty);
+        return Subject.forParse(subjectList.first);
+      });
 }

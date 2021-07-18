@@ -28,18 +28,20 @@ class Question extends ParseObject {
     ..objectId = parseObj.objectId;
 
   static Future<List<Question>> getQsFromDBForQuiz(
-      {int numberOfQs = QUESTIONS_IN_QUIZ}) {
+      {required String subjectName, int numberOfQs = QUESTIONS_IN_QUIZ}) async {
     final controller = Get.find<AppController>();
 
     assert(controller.currentUser != null);
     final curUserQuestions = controller.currentUser!.allQuestions;
 
+    final subject = await Subject.getFromDB(subjectName);
+
     return (QueryBuilder<ParseObject>(Question())
-          ..whereNotContainedIn('objectId', curUserQuestions))
+          ..whereEqualTo(keySubject, subject.objectId)
+          ..whereNotContainedIn('objectId', curUserQuestions)
+          ..setLimit(numberOfQs))
         .find()
-        .then((parseQuestions) => (parseQuestions
-              ..shuffle()
-              ..sublist(0, numberOfQs - 1))
+        .then((parseQuestions) => (parseQuestions..shuffle())
             .map((ParseObject p) => Question.forParse(p))
             .toList());
   }
