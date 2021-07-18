@@ -51,7 +51,7 @@ class HeartIndicator extends StatelessWidget {
           children: [
             Center(
               child: LiquidCustomProgressIndicator(
-                value: 1 - Get.find<HeartController>().minutesTillNext / 20,
+                value: 1 - c.minutesTillNext / User.HEART_ADD_INTERVAL,
                 valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
                 backgroundColor: Colors.white70,
                 direction: Axis.vertical,
@@ -61,7 +61,7 @@ class HeartIndicator extends StatelessWidget {
             Center(
               child: FittedBox(
                 child: Text(
-                  Get.find<HeartController>().hearts.toString(),
+                  c.hearts.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.red.shade900,
@@ -104,6 +104,11 @@ class HeartController extends GetxController {
   int hearts;
 
   HeartController(this.minutesTillNext, this.hearts);
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
 
   incrementMinutesTillNext() {
     minutesTillNext++;
@@ -173,8 +178,7 @@ class MoneyController extends GetxController {
 }
 
 class PointsIndicator extends StatelessWidget {
-  const PointsIndicator({Key? key})
-      : super(key: key);
+  const PointsIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

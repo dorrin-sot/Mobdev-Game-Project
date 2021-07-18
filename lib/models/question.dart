@@ -55,6 +55,7 @@ class Question extends ParseObject {
     if (answer == null) {
       curUser.addTimeoutQs(this);
       curUser.useHeart();
+      curUser.save();
       save();
       return false;
     }
@@ -62,11 +63,13 @@ class Question extends ParseObject {
     if (this.correctAns == answer) {
       curUser.addCorrectQ(this);
       curUser.setIncrement(User.keyPoints, 1); // add a point if answered correct fixme: maybe give more than one point
+      curUser.save();
       save();
       return true;
     } else {
       curUser.addIncorrectQ(this);
       curUser.useHeart();
+      curUser.save();
       save();
       return false;
     }
