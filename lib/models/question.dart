@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/subject.dart';
+import 'package:mobdev_game_project/models/user.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class Question extends ParseObject {
@@ -53,12 +54,14 @@ class Question extends ParseObject {
     final curUser = c.currentUser!;
     if (answer == null) {
       curUser.addTimeoutQs(this);
+      curUser.useHeart();
       save();
       return false;
     }
 
     if (this.correctAns == answer) {
       curUser.addCorrectQ(this);
+      curUser.setIncrement(User.keyPoints, 1); // add a point if answered correct fixme: maybe give more than one point
       save();
       return true;
     } else {
