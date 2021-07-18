@@ -36,7 +36,7 @@ class CustomBottomNavBar extends CurvedNavigationBar {
           size: iconSize,
         ),
         pageDest: '/account/' +
-            (c.isLoggedIn != null && c.isLoggedIn! ? 'login' : 'profile'),
+            (c.isLoggedIn == null  ? 'login' : (c.isLoggedIn! ? 'login' : 'profile')),
       ),
     ];
 

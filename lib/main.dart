@@ -32,9 +32,7 @@ Future main() async {
 
   final c = AppController();
   Get.put(c);
-  // fixme remove below when login page is added
-  User("test", "test").login();
-  // end fixme remove below when login page is added
+
 
   runApp(GetMaterialApp(
     initialRoute: '/home',
