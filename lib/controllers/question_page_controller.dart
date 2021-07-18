@@ -22,6 +22,13 @@ class QuestionPageController extends GetxController {
   List<Question>? questions = <Question>[].obs;
   Question? currentQuestion = null;
   RxInt _questionIndex = 0.obs;
+  RxBool _waiting = false.obs;
+
+  bool get waiting => _waiting.value;
+
+  set waiting(bool value) {
+    _waiting.value = value;
+  }
 
   RxList<ColorSwitch> _colorSwitch =
       List.generate(4, (index) => ColorSwitch.MAIN).obs;
@@ -102,9 +109,8 @@ class QuestionPageController extends GetxController {
   }
 
   void reset() {
-    correctAnswer = questions![index].correctAns! -1;
-    _colorSwitch.value= List.filled(4, ColorSwitch.MAIN);
-
-
+    correctAnswer = questions![index].correctAns! - 1;
+    _colorSwitch.value = List.filled(4, ColorSwitch.MAIN);
+    _waiting.value = false;
   }
 }

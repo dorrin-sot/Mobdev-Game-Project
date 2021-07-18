@@ -6,8 +6,10 @@ class AnswerWidget extends StatelessWidget {
   final String answer;
   final int index;
 
-  AnswerWidget(this.answer,
-      this.index,);
+  AnswerWidget(
+    this.answer,
+    this.index,
+  );
 
   QuestionPageController controller = Get.find<QuestionPageController>();
 
@@ -16,13 +18,18 @@ class AnswerWidget extends StatelessWidget {
     return Container(
       child: Obx(() {
         return ElevatedButton(
-          onPressed: () {
-            controller.setColor(index);
-            Future.delayed(Duration(seconds: 2),(){
-              controller.increment();
-              controller.reset();
-            });
-          },
+          onPressed: controller.waiting
+              ? null
+              : () {
+                  controller.setColor(index);
+                  print("statrt");
+                  Future.delayed(Duration(seconds: 2), () {
+                    controller.increment();
+                    controller.reset();
+                  });
+                  print("end");
+                  controller.waiting = true;
+                },
           child: Text(
             answer,
             textAlign: TextAlign.center,
@@ -32,8 +39,8 @@ class AnswerWidget extends StatelessWidget {
                   controller.colorSwitch[index].color),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ))),
+                borderRadius: BorderRadius.zero,
+              ))),
         );
       }),
       // color: controller.colorSwitch.color,
