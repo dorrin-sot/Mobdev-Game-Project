@@ -43,7 +43,7 @@ class CustomBottomNavBar extends CurvedNavigationBar {
     return CurvedNavigationBar(
       index: 1,
       items: navBarItems.map((e) => e.child).toList(),
-      onTap: (index) => Get.toNamed(
+      onTap: (index) => Get.offNamed(
         navBarItems.where((element) => element.index == index).first.pageDest!,
       ),
     );
