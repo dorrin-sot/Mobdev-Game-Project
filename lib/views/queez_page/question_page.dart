@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
+import 'package:mobdev_game_project/views/queez_page/answer_widget.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class QuestionPage extends StatelessWidget {
@@ -19,7 +20,7 @@ class QuestionPage extends StatelessWidget {
         brightness: Brightness.light,
       ),
       body: FutureBuilder(
-        future: questionPageController.fetchQuestions(),
+        future: questionPageController.fetchQuestions(subject),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData ||
               (snapshot.data as List<dynamic>).length == 0) {
@@ -31,20 +32,33 @@ class QuestionPage extends StatelessWidget {
                   children: [
                     Text("question from controller: " +
                         questionPageController
-                            .questions[questionPageController.index()]),
-                    Text("question: " +
-                        snapshot.data[questionPageController.index()]
-                            .get<String>("question")),
+                            .questions![questionPageController.index]
+                            .question!),
                     Text(questionPageController.index.toString()),
-                    ElevatedButton(
-                        onPressed: () => questionPageController.increment(),
-                        child: Text("click me"))
+                    AnswersGridView(),
                   ],
                 );
               }),
             );
           }
         },
+      ),
+    );
+  }
+
+  GridView AnswersGridView() {
+    questionPageController.correctAnswer = questionPageController
+        .questions![questionPageController.index].correctAns! -1;
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 2,
+      children: List.generate(
+        4,
+        (index) => AnswerWidget(
+          questionPageController
+              .questions![questionPageController.index].answers![index],
+          index,
+        ),
       ),
     );
   }
