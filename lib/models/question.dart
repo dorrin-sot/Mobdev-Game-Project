@@ -63,6 +63,7 @@ class Question extends ParseObject {
       return true;
     } else {
       curUser.addIncorrectQ(this);
+      curUser.useHeart();
       save();
       return false;
     }
