@@ -18,6 +18,10 @@ class AnswerWidget extends StatelessWidget {
         return ElevatedButton(
           onPressed: () {
             controller.setColor(index);
+            Future.delayed(Duration(seconds: 2),(){
+              controller.increment();
+              controller.reset();
+            });
           },
           child: Text(
             answer,

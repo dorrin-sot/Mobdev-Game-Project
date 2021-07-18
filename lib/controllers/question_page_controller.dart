@@ -22,13 +22,6 @@ class QuestionPageController extends GetxController {
   List<Question>? questions = <Question>[].obs;
   Question? currentQuestion = null;
   RxInt _questionIndex = 0.obs;
-  RxInt _pressedIndex = 0.obs;
-
-  int get pressedIndex => _pressedIndex.value;
-
-  set pressedIndex(int value) {
-    _pressedIndex.value = value;
-  }
 
   RxList<ColorSwitch> _colorSwitch =
       List.generate(4, (index) => ColorSwitch.MAIN).obs;
@@ -106,5 +99,12 @@ class QuestionPageController extends GetxController {
     // questions = await Question.getQsFromDBForQuiz(subjectName: subjectName);
     // print("result from server: "+ questions!.toList().toString() );
     // return questions;
+  }
+
+  void reset() {
+    correctAnswer = questions![index].correctAns! -1;
+    _colorSwitch.value= List.filled(4, ColorSwitch.MAIN);
+
+
   }
 }
