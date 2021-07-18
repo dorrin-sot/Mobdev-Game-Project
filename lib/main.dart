@@ -28,7 +28,7 @@ Future main() async {
       },
       parseUserConstructor: (username, password, emailAddress,
               {client, debug, sessionToken}) =>
-          User(username, password),
+          User(username!, password!),
       debug: true);
 
   final c = AppController();

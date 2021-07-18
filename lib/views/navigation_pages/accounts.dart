@@ -50,7 +50,7 @@ class AccountsPageLogin extends StatelessWidget {
             ),
             TextButton(
                 onPressed: () {
-                  User(controller.usernameController.text,
+                  User.forParse(controller.usernameController.text,
                           controller.passwordController.text)
                       .login();
                 },
@@ -105,7 +105,7 @@ class AccountsPageRegister extends StatelessWidget {
             ),
             TextButton(
                 onPressed: () {
-                  User(controller.usernameController.text,
+                  User.forParse(controller.usernameController.text,
                           controller.passwordController.text,emailAddress:controller.emailController.text)
                       .signUp();
                 },

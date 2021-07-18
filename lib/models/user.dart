@@ -17,11 +17,23 @@ class User extends ParseUser {
   static const String keyMoney = 'money';
   static const String keyPoints = 'points';
 
-  static final HEARTS_MAX = 20;
+  static const HEARTS_MAX = 20;
   static final HEART_ADD_INTERVAL = 15; // in minutes
 
-  User(String? username, String? password, {String? emailAddress})
+  User(String username, String password, {String? emailAddress})
       : super(username, password, emailAddress);
+
+  factory User.forParse(String username, String password,
+          {String? emailAddress,
+          int hearts = HEARTS_MAX,
+          int money = 100,
+          int points = 5,
+          DateTime? heartsLastUpdateTime}) =>
+      User(username, password, emailAddress: emailAddress)
+        ..hearts = hearts
+        ..money = money
+        ..points = points
+        ..heartsLastUpdateTime = heartsLastUpdateTime ?? DateTime.now();
 
   @override
   Future<ParseResponse> login({bool doNotSendInstallationID = false}) async {
@@ -38,6 +50,25 @@ class User extends ParseUser {
     });
   }
 
+  loginGoogle({required String email}) async {
+    // fixme fix after ui done
+    // final GoogleSignIn _googleSignIn = GoogleSignIn(
+    //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+    // final account = (await _googleSignIn.signIn())!;
+    // final authentication = await account.authentication;
+    //
+    // await ParseUser.loginWith(
+    //         'google',
+    //         google(_googleSignIn.currentUser!.id, authentication.accessToken!,
+    //             authentication.idToken!))
+    //     .then((response) {
+    //   final c = Get.find<AppController>();
+    //   c.isLoggedIn = true;
+    //   c.currentUser = this;
+    //   c.update();
+    // });
+  }
+
   @override
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
     return await super
@@ -51,6 +82,10 @@ class User extends ParseUser {
       }
       return response;
     });
+  }
+
+  logoutGoogle() async {
+    // fixme add after ui done
   }
 
   @override
@@ -69,8 +104,12 @@ class User extends ParseUser {
     });
   }
 
+  signUpGoogle() async {
+    // fixme add after ui done
+  }
+
   Future<bool> userExists(String username) async {
-    final q = QueryBuilder<ParseUser>(User(username, password))
+    final q = QueryBuilder<ParseUser>(User(username, password!))
       ..whereEqualTo(keyUsername, username);
     var response = await q.find();
     return response.isNotEmpty;
@@ -119,10 +158,9 @@ class User extends ParseUser {
 
   int get minutesTillNext {
     if (hearts == HEARTS_MAX) return 0;
-    return DateTime
-        .now()
+    return DateTime.now()
         .difference(
-        heartsLastUpdateTime.add(Duration(minutes: HEART_ADD_INTERVAL)))
+            heartsLastUpdateTime.add(Duration(minutes: HEART_ADD_INTERVAL)))
         .inMinutes;
   }
 
@@ -131,10 +169,7 @@ class User extends ParseUser {
 
     if (minutesTillNext >= HEART_ADD_INTERVAL) {
       final minutesPassed =
-          DateTime
-              .now()
-              .difference(heartsLastUpdateTime)
-              .inMinutes;
+          DateTime.now().difference(heartsLastUpdateTime).inMinutes;
 
       final numOfAddedHearts = (minutesPassed / HEART_ADD_INTERVAL) as int;
 
@@ -165,9 +200,7 @@ class User extends ParseUser {
       heartsLastUpdateTime = DateTime.now(); // start countdown from now
     } else {
       final minutesPassed =
-          heartsLastUpdateTime
-              .difference(DateTime.now())
-              .inMinutes;
+          heartsLastUpdateTime.difference(DateTime.now()).inMinutes;
       // set last update to remainder from last interval
       heartsLastUpdateTime = DateTime.now()
           .subtract(Duration(minutes: minutesPassed % HEART_ADD_INTERVAL));
