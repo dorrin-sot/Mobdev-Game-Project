@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-
 import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
+import 'package:mobdev_game_project/views/no_network_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'models/question.dart';
@@ -34,7 +34,6 @@ Future main() async {
   final c = AppController();
   Get.put(c);
 
-
   runApp(GetMaterialApp(
     initialRoute: '/home',
     getPages: [
@@ -58,6 +57,10 @@ Future main() async {
           name: '/account/register',
           page: () => AccountsPageRegister(),
           transition: Transition.noTransition),
+      GetPage(
+          name: '/no-network',
+          page: () => NoNetworkPage(),
+          transition: Transition.rightToLeft),
     ],
   ));
 }
