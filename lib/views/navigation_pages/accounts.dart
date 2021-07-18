@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobdev_game_project/appbar_related.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:mobdev_game_project/models/user.dart';
-import 'package:mobdev_game_project/navbar_related.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 
 class AccountsPageProfile extends StatelessWidget {
   const AccountsPageProfile({Key? key}) : super(key: key);
