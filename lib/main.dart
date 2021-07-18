@@ -34,36 +34,46 @@ Future main() async {
   final c = AppController();
   Get.put(c);
 
-  runApp(GetMaterialApp(
-    initialRoute: '/home',
-    getPages: [
-      GetPage(
-          name: '/home',
-          page: () => HomePage(),
-          transition: Transition.noTransition),
-      GetPage(
-          name: '/settings',
-          page: () => SettingsPage(),
-          transition: Transition.noTransition),
-      GetPage(
-          name: '/account/profile',
-          page: () => AccountsPageProfile(),
-          transition: Transition.noTransition),
-      GetPage(
-          name: '/account/login',
-          page: () => AccountsPageLogin(),
-          transition: Transition.noTransition),
-      GetPage(
-          name: '/account/register',
-          page: () => AccountsPageRegister(),
-          transition: Transition.noTransition),
-      GetPage(
-          name: '/no-network',
-          page: () => NoNetworkPage(),
-          transition: Transition.rightToLeft),
-    ],
-  ));
+  runApp(MyApp());
 }
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      initialRoute: '/home',
+      getPages: [
+        GetPage(
+            name: '/home',
+            page: () => HomePage(),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/settings',
+            page: () => SettingsPage(),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/account/profile',
+            page: () => AccountsPageProfile(),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/account/login',
+            page: () => AccountsPageLogin(),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/account/register',
+            page: () => AccountsPageRegister(),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/no-network',
+            page: () => NoNetworkPage(),
+            transition: Transition.rightToLeft),
+      ],
+    );
+  }
+}
+
 
 class AppController extends GetxController {
   bool? isLoggedIn;
