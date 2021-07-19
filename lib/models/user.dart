@@ -21,7 +21,7 @@ class User extends ParseUser {
   static const String keyPoints = 'points';
 
   static const HEARTS_MAX = 20;
-  static final HEART_ADD_INTERVAL = 1; // in minutes
+  static final HEART_ADD_INTERVAL = 15; // in minutes
 
   User(String username, String password, {String? emailAddress})
       : super(username, password, emailAddress);
