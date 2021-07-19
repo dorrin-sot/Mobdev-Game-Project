@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
@@ -43,34 +45,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      initialRoute: '/home',
-      getPages: [
-        GetPage(
-            name: '/home',
-            page: () => HomePage(),
-            transition: Transition.noTransition),
-        GetPage(
-            name: '/settings',
-            page: () => SettingsPage(),
-            transition: Transition.noTransition),
-        GetPage(
-            name: '/account/profile',
-            page: () => AccountsPageProfile(),
-            transition: Transition.noTransition),
-        GetPage(
-            name: '/account/login',
-            page: () => AccountsPageLogin(),
-            transition: Transition.noTransition),
-        GetPage(
-            name: '/account/register',
-            page: () => AccountsPageRegister(),
-            transition: Transition.noTransition),
-        GetPage(
-            name: '/no-network',
-            page: () => NoNetworkPage(),
-            transition: Transition.rightToLeft),
-      ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: CustomAppbar.build(),
+        bottomNavigationBar: CustomBottomNavBar.build(),
+        backgroundColor: Colors.white,
+        body: GetMaterialApp(
+          initialRoute: '/home',
+          getPages: [
+            GetPage(
+                name: '/home',
+                page: () => HomePage(),
+                transition: Transition.noTransition),
+            GetPage(
+                name: '/settings',
+                page: () => SettingsPage(),
+                transition: Transition.noTransition),
+            GetPage(
+                name: '/account/profile',
+                page: () => AccountsPageProfile(),
+                transition: Transition.noTransition),
+            GetPage(
+                name: '/account/login',
+                page: () => AccountsPageLogin(),
+                transition: Transition.noTransition),
+            GetPage(
+                name: '/account/register',
+                page: () => AccountsPageRegister(),
+                transition: Transition.noTransition),
+            GetPage(
+                name: '/no-network',
+                page: () => NoNetworkPage(),
+                transition: Transition.rightToLeft),
+          ],
+        ),
+      ),
     );
   }
 }
