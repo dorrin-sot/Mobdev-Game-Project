@@ -29,13 +29,11 @@ class Question extends ParseObject {
     ..objectId = parseObj.objectId;
 
   static Future<List<Question>> getQsFromDBForQuiz(
-      {required String subjectName, int numberOfQs = QUESTIONS_IN_QUIZ}) async {
+      {required Subject subject, int numberOfQs = QUESTIONS_IN_QUIZ}) async {
     final controller = Get.find<AppController>();
 
     assert(controller.currentUser != null);
     final curUserQuestions = controller.currentUser!.allQuestions;
-
-    final subject = await Subject.getFromDB(subjectName);
 
     return (QueryBuilder<ParseObject>(Question())
           ..whereEqualTo(keySubject, subject.objectId)
