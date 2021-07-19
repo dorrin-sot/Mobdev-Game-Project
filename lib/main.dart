@@ -78,8 +78,10 @@ class MyApp extends StatelessWidget {
                 page: () => NoNetworkPage(),
                 transition: Transition.rightToLeft),
           ],
+          debugShowCheckedModeBanner: false,
         ),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
