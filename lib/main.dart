@@ -112,12 +112,10 @@ class AppController extends GetxController {
     String? curUserPWPref = prefs.getString('curUserPW');
 
     if (isLoggedInPref!) {
-      isLoggedIn = isLoggedInPref;
-      currentUser = User.forParse(
+      User(
         curUserUNPref!,
         curUserPWPref!,
-      );
-      update();
+      ).login();
     }
   }
 

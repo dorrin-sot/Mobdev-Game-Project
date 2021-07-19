@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -39,10 +41,7 @@ class HeartIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User currentUser = Get.find<AppController>().currentUser!;
-
-    final c = HeartController(currentUser.minutesTillNext, currentUser.hearts);
-    Get.put(c);
+    Get.put(HeartController());
 
     return SizedBox(
         width: 42.5,
@@ -50,22 +49,26 @@ class HeartIndicator extends StatelessWidget {
         child: Stack(
           children: [
             Center(
-              child: LiquidCustomProgressIndicator(
-                value: 1 - c.minutesTillNext / User.HEART_ADD_INTERVAL,
-                valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
-                backgroundColor: Colors.white70,
-                direction: Axis.vertical,
-                shapePath: getHeartPath(Size(42.5, 42.5)),
+              child: GetBuilder<HeartController>(
+                builder: (c) => LiquidCustomProgressIndicator(
+                  value: c.currentUser.timeDoneFraction,
+                  valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
+                  backgroundColor: Colors.white70,
+                  direction: Axis.vertical,
+                  shapePath: getHeartPath(Size(42.5, 42.5)),
+                ),
               ),
             ),
             Center(
               child: FittedBox(
-                child: Text(
-                  c.hearts.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.red.shade900,
-                    fontWeight: FontWeight.bold,
+                child: GetBuilder<HeartController>(
+                  builder: (c) => Text(
+                    c.currentUser.hearts.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.red.shade900,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -100,29 +103,27 @@ class HeartIndicator extends StatelessWidget {
 }
 
 class HeartController extends GetxController {
-  int minutesTillNext;
-  int hearts;
-
-  HeartController(this.minutesTillNext, this.hearts);
+  final currentUser = Get.find<AppController>().currentUser!;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+
+    await currentUser.updateHearts().then((value) => scheduleUpdateHeart());
+    ;
   }
 
-  incrementMinutesTillNext() {
-    minutesTillNext++;
-    update();
-  }
-
-  incrementHearts() {
-    hearts = min(User.HEARTS_MAX, hearts + 1);
-    update();
-  }
-
-  decrementHearts() {
-    hearts = max(0, hearts - 1);
-    update();
+  void scheduleUpdateHeart() {
+    Cron().schedule(
+        Schedule.parse("*/10 * * * * *"),
+        () => update());
+    Future.delayed(
+        DateTime.now().difference(currentUser.heartsLastUpdateTime
+            .add(Duration(minutes: User.HEART_ADD_INTERVAL))),
+        () => Cron().schedule(
+            Schedule.parse(
+                "9,19,29,39,49,59 */${User.HEART_ADD_INTERVAL} * * * *"),
+            () => currentUser.updateHearts()));
   }
 }
 

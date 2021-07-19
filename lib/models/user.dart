@@ -1,6 +1,9 @@
+import 'dart:core';
+
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class User extends ParseUser {
@@ -18,7 +21,7 @@ class User extends ParseUser {
   static const String keyPoints = 'points';
 
   static const HEARTS_MAX = 20;
-  static final HEART_ADD_INTERVAL = 15; // in minutes
+  static final HEART_ADD_INTERVAL = 1; // in minutes
 
   User(String username, String password, {String? emailAddress})
       : super(username, password, emailAddress);
@@ -110,8 +113,8 @@ class User extends ParseUser {
     // fixme add after ui done
   }
 
-  Future<bool> userExists(String username) async {
-    final q = QueryBuilder<ParseUser>(User(username, password!))
+  static Future<bool> userExists(String username) async {
+    final q = QueryBuilder<ParseUser>(User(username, ''))
       ..whereEqualTo(keyUsername, username);
     var response = await q.find();
     return response.isNotEmpty;
@@ -158,55 +161,43 @@ class User extends ParseUser {
   set heartsLastUpdateTime(DateTime value) =>
       set<DateTime>(keyHeartsLastUpdateTime, value);
 
-  int get minutesTillNext {
-    if (hearts == HEARTS_MAX) return 0;
-    return DateTime.now()
-        .difference(
-            heartsLastUpdateTime.add(Duration(minutes: HEART_ADD_INTERVAL)))
-        .inMinutes;
+  double get timeDoneFraction {
+    if (hearts == HEARTS_MAX) return 1;
+    final res =
+        DateTime.now().difference(heartsLastUpdateTime).inSeconds.toDouble() /
+            (HEART_ADD_INTERVAL * 60).toDouble();
+    return res;
   }
 
-  addHeart() {
-    assert(hearts != HEARTS_MAX);
+  double get minutesTillNext => (1 - timeDoneFraction) * HEART_ADD_INTERVAL;
 
-    if (minutesTillNext >= HEART_ADD_INTERVAL) {
-      final minutesPassed =
-          DateTime.now().difference(heartsLastUpdateTime).inMinutes;
+  updateHearts() async {
+    if (hearts >= HEARTS_MAX) return;
 
-      final numOfAddedHearts = (minutesPassed / HEART_ADD_INTERVAL) as int;
+    final dHeart = timeDoneFraction.floor();
+    setIncrement(keyHearts, dHeart);
+    heartsLastUpdateTime = heartsLastUpdateTime
+        .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
+        .at0secs();
 
-      // hearts become full after adding
-      if (hearts + numOfAddedHearts >= HEARTS_MAX) {
-        hearts = HEARTS_MAX;
-        // set last update to now
-        heartsLastUpdateTime = DateTime.now();
-      }
-      // hearts incomplete even after adding
-      else {
-        setIncrement(keyHearts, numOfAddedHearts);
-        // set last update to remainder from last interval
-        heartsLastUpdateTime = DateTime.now()
-            .subtract(Duration(minutes: minutesPassed % HEART_ADD_INTERVAL));
-      }
-    }
-    save();
+    save().then((value) => Get.find<HeartController>().update());
   }
 
-  useHeart() {
-    // fixme needs testing after using of hearts get added
+  useHeart() async {
     assert(hearts > 0);
 
-    setDecrement(keyHearts, 1);
-
-    if (hearts == 20) {
-      heartsLastUpdateTime = DateTime.now(); // start countdown from now
-    } else {
-      final minutesPassed =
-          heartsLastUpdateTime.difference(DateTime.now()).inMinutes;
-      // set last update to remainder from last interval
-      heartsLastUpdateTime = DateTime.now()
-          .subtract(Duration(minutes: minutesPassed % HEART_ADD_INTERVAL));
+    if (hearts == HEARTS_MAX) {
+      heartsLastUpdateTime = DateTime.now().at0secs();
     }
-    save();
+
+    setDecrement(keyHearts, 1);
+    await save();
+    Get.find<HeartController>().update();
+  }
+}
+
+extension DateTimeClone on DateTime {
+  DateTime at0secs() {
+    return this.subtract(Duration(seconds: second));
   }
 }
