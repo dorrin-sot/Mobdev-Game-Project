@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
+import 'package:mobdev_game_project/models/subject.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
