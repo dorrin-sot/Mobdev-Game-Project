@@ -9,7 +9,7 @@ extension ColorSwitchExtension on ColorSwitch {
   Color get color {
     switch (this) {
       case ColorSwitch.MAIN:
-        return Colors.yellow;
+        return Colors.blue;
       case ColorSwitch.WRONG:
         return Colors.red;
       case ColorSwitch.CORRECT:
@@ -102,10 +102,10 @@ class QuestionPageController extends GetxController {
           subject: null),
     ];
     return questions;
-
     // questions = await Question.getQsFromDBForQuiz(subjectName: subjectName);
     // print("result from server: "+ questions!.toList().toString() );
     // return questions;
+
   }
 
   void reset() {
