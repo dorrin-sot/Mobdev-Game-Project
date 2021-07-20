@@ -22,4 +22,9 @@ class Subject extends ParseObject {
   static Future<List<Subject>> getAllFromDB() =>
       (QueryBuilder<ParseObject>(Subject())).find().then((subjectList) =>
           subjectList.map((parseObj) => Subject.forParse(parseObj)).toList());
+
+  @override
+  String toString() {
+    return 'Subject{name: $name}';
+  }
 }

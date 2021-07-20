@@ -21,55 +21,77 @@ class Question extends ParseObject {
   Question({this.question, this.answers, this.correctAns, this.subject})
       : super(_keyTableName);
 
-  factory Question.forParse(ParseObject parseObj) => Question(
-      question: parseObj.get(keyQuestion),
-      answers: parseObj.get(keyAnswers),
-      correctAns: parseObj.get(keyCorrectAns),
-      subject: parseObj.get(keySubject))
-    ..objectId = parseObj.objectId;
+  factory Question.forParse(ParseObject parseObj, Subject subject) {
+    return Question(
+        question: parseObj.get(keyQuestion),
+        answers: parseObj.get(keyAnswers)!.toString().getList(),
+        correctAns: parseObj.get(keyCorrectAns),
+        subject: subject)
+      ..objectId = parseObj.objectId;
+  }
 
-  static Future<List<Question>> getQsFromDBForQuiz(
-      {required Subject subject, int numberOfQs = QUESTIONS_IN_QUIZ}) async {
-    final controller = Get.find<AppController>();
+  static Future<List<Question>> getQsFromDBForQuiz(Subject subject,
+      {int numberOfQs = QUESTIONS_IN_QUIZ}) async {
+    final c = Get.find<AppController>();
+    assert(c.currentUser != null);
 
-    assert(controller.currentUser != null);
-    final curUserQuestions = controller.currentUser!.allQuestions;
+    final curUser = c.currentUser!;
 
-    return (QueryBuilder<ParseObject>(Question())
-          ..whereEqualTo(keySubject, subject.objectId)
-          ..whereNotContainedIn('objectId', curUserQuestions)
-          ..setLimit(numberOfQs))
-        .find()
-        .then((parseQuestions) => (parseQuestions..shuffle())
-            .map((ParseObject p) => Question.forParse(p))
-            .toList());
+    final query = QueryBuilder<ParseObject>(Question())
+      ..whereMatchesQuery(
+          'subject',
+          QueryBuilder<ParseObject>(Subject())
+            ..whereEqualTo('name', subject.name))
+      ..whereDoesNotMatchQuery(
+          'objectId',
+          QueryBuilder<ParseObject>(Question())
+            ..whereRelatedTo('allQuestions', '_User', curUser.objectId!))
+      ..setLimit(numberOfQs);
+
+    return query.query().then((response) => (response.results!..shuffle())
+        .map((qParse) => Question.forParse(qParse as ParseObject, subject))
+        .toList());
   }
 
   // if answer is null means user ran out of time otherwise check if answer was correct
-  // returns if answer was correct or not as a bool (returns false if out of time)
-  bool answerQ({int? answer}) {
+  // returns if answer was correct or not as a bool (returns null if out of time)
+  bool? answerQ({int? answer}) {
     final c = Get.find<AppController>();
     final curUser = c.currentUser!;
+
+    bool? result;
     if (answer == null) {
-      curUser.addTimeoutQs(this);
-      curUser.useHeart();
-      curUser.save();
-      save();
-      return false;
+      curUser.setIncrement(User.keyTimeoutQCount, 1);
+      result = null;
+    } else if (this.correctAns == answer) {
+      curUser.setIncrement(User.keyCorrectQCount, 1);
+      curUser.setIncrement(User.keyPoints,
+          1); // add a point if answered correct fixme: maybe give more than one point
+      result = true;
+    } else {
+      curUser.setIncrement(User.keyIncorrectQCount, 1);
+      result = false;
     }
 
-    if (this.correctAns == answer) {
-      curUser.addCorrectQ(this);
-      curUser.setIncrement(User.keyPoints, 1); // add a point if answered correct fixme: maybe give more than one point
-      curUser.save();
-      save();
-      return true;
-    } else {
-      curUser.addIncorrectQ(this);
-      curUser.useHeart();
-      curUser.save();
-      save();
-      return false;
-    }
+    curUser.addQuestion(this);
+    curUser.save();
+    return result;
+  }
+
+  @override
+  String toString() {
+    return 'Question{question: $question'
+        ', answers: $answers'
+        ', correctAns: $correctAns'
+        ', subject: $subject}';
+  }
+}
+
+extension GetListFromString on String {
+  List<String> getList() {
+    return substring(1, length - 1)
+        .split(",")
+        .map((e) => e.substring(0, e.length))
+        .toList();
   }
 }

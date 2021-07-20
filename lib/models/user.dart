@@ -12,9 +12,10 @@ class User extends ParseUser {
   static const String keyUsername = 'username';
   static const String keyPassword = 'password';
   static const String keyEmail = 'email';
-  static const String keyCorrectQs = 'correctQs';
-  static const String keyIncorrectQs = 'incorrectQs';
-  static const String keyTimeoutQs = 'timeoutQs';
+  static const String keyAllQuestions = 'allQuestions';
+  static const String keyCorrectQCount = 'correctQCount';
+  static const String keyIncorrectQCount = 'incorrectQCount';
+  static const String keyTimeoutQCount = 'timeoutQCount';
   static const String keyHearts = 'hearts';
   static const String keyHeartsLastUpdateTime = 'heartsLastUpdateTime';
   static const String keyMoney = 'money';
@@ -132,29 +133,12 @@ class User extends ParseUser {
 
   set points(int value) => set<int>(keyPoints, value);
 
-  List<Question> get correctQs => get<List<Question>>(keyCorrectQs)!;
+  ParseRelation<Question> get allQuestions => getRelation(keyAllQuestions);
 
-  set correctQs(List<Question> value) =>
-      set<List<Question>>(keyCorrectQs, value);
+  set allQuestions(ParseRelation<Question> value) =>
+      set<ParseRelation<Question>>(keyAllQuestions, value);
 
-  addCorrectQ(Question question) => getRelation(keyCorrectQs).add(question);
-
-  List<Question> get incorrectQs => get<List<Question>>(keyIncorrectQs)!;
-
-  set incorrectQs(List<Question> value) =>
-      set<List<Question>>(keyIncorrectQs, value);
-
-  addIncorrectQ(Question question) => getRelation(keyIncorrectQs).add(question);
-
-  List<Question> get timeoutQs => get<List<Question>>(keyTimeoutQs)!;
-
-  set timeoutQs(List<Question> value) =>
-      set<List<Question>>(keyTimeoutQs, value);
-
-  addTimeoutQs(Question question) => getRelation(keyTimeoutQs).add(question);
-
-  List<Question> get allQuestions =>
-      []..addAll(correctQs)..addAll(incorrectQs)..addAll(timeoutQs);
+  addQuestion(Question question) => getRelation(keyAllQuestions).add(question);
 
   DateTime get heartsLastUpdateTime => get<DateTime>(keyHeartsLastUpdateTime)!;
 
