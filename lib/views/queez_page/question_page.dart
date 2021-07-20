@@ -10,8 +10,6 @@ class QuestionPage extends StatelessWidget {
   final QuestionPageController questionPageController =
       Get.put(QuestionPageController());
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,13 +29,18 @@ class QuestionPage extends StatelessWidget {
               child: Obx(() {
                 return Column(
                   children: [
-                    Text(
-                        "question ${questionPageController.index.toString()} from controller: " +
-                            questionPageController
-                                .questions![questionPageController.index]
-                                .question!),
-                    AnswersListView(),
-                    Clock(),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Text(
+                            "question ${questionPageController.index.toString()} from controller: " +
+                                questionPageController
+                                    .questions![questionPageController.index]
+                                    .question!),
+                      ),
+                    ),
+                    Expanded(flex: 6, child: AnswersListView()),
+                    Expanded(flex: 3, child: Clock()),
                   ],
                 );
               }),

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -35,10 +38,6 @@ class QuestionPageController extends GetxController {
 
   List<ColorSwitch> get colorSwitch => _colorSwitch;
 
-  SetColorSwitch(ColorSwitch value, index) {
-    _colorSwitch[index] = value;
-  }
-
   final RxInt _correctAnswer = 0.obs;
 
   int get correctAnswer => _correctAnswer.value;
@@ -53,17 +52,14 @@ class QuestionPageController extends GetxController {
     _questionIndex.value = value;
   }
 
-  increment() {
-    _questionIndex += 1;
-  }
-
-  setColor(int index) {
+  setColor(int index, bool timeIsUp) {
     print("index: $index , ans: $_correctAnswer");
+
     for (int i = 0; i < 4; i++) {
       if (index == i) {
         if (index == _correctAnswer.value) {
           _colorSwitch[i] = ColorSwitch.CORRECT;
-        } else {
+        } else if (!timeIsUp) {
           _colorSwitch[i] = ColorSwitch.WRONG;
         }
       } else if (i == _correctAnswer.value) {
@@ -105,12 +101,31 @@ class QuestionPageController extends GetxController {
     // questions = await Question.getQsFromDBForQuiz(subjectName: subjectName);
     // print("result from server: "+ questions!.toList().toString() );
     // return questions;
-
   }
 
-  void reset() {
+  void prepareNextQ(int index, bool timeIsUp) {
+    setColor(index, timeIsUp);
+    Future.delayed(Duration(seconds: 2), () {
+      resetForNextQOrQuit();
+    });
+    waiting = true;
+    if (!timeIsUp) {
+      ClockController controller = Get.find<ClockController>();
+      controller.timer.value.cancel();
+      controller.dateTime.value = 0;
+    }
+  }
+
+  void resetForNextQOrQuit() {
+    //todo quit function
+    _questionIndex += 1;
     correctAnswer = questions![index].correctAns! - 1;
     _colorSwitch.value = List.filled(4, ColorSwitch.MAIN);
     _waiting.value = false;
+    ClockController controller = Get.find<ClockController>();
+    controller.timer.value =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
+      controller.fixTime(timer);
+    });
   }
 }
