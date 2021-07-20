@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
         child: Container(
           child: ElevatedButton(
             child: Text("کلیک بنمای"),
-            onPressed: () => Get.to(SubjectPage()),
+            onPressed: () => Get.toNamed("/subjects"),
           ),
         ),
       );

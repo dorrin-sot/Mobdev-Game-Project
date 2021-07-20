@@ -6,11 +6,11 @@ import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class QuestionPage extends StatelessWidget {
-  final String subject;
+  final String subject = Get.arguments['subject'];
   final QuestionPageController questionPageController =
       Get.put(QuestionPageController());
 
-  QuestionPage(this.subject);
+
 
   @override
   Widget build(BuildContext context) {

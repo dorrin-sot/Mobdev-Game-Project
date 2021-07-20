@@ -16,7 +16,7 @@ class SubjectWidget extends StatelessWidget {
       child: ElevatedButton(
         child: Text(subjectName),
         onPressed: () {
-          Get.to(QuestionPage(subjectName));
+          Get.toNamed("/question_page", arguments: {'subject': subjectName});
         },
       ),
     );
