@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
@@ -6,7 +5,7 @@ import 'package:mobdev_game_project/utils/utils.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class Clock extends StatelessWidget {
-
+  static final double maxTime =29;
   final ClockController clockController = Get.put(ClockController());
 
   @override
@@ -22,7 +21,7 @@ class Clock extends StatelessWidget {
         child: Center(
             child: Obx(() {
               return ClockWidget(
-                dateTime: clockController.dateTime.value,
+                seconds: clockController.dateTime.value,
               );
             })),
       ),
@@ -31,28 +30,28 @@ class Clock extends StatelessWidget {
 }
 
 class ClockWidget extends StatelessWidget {
-  final DateTime dateTime;
-
-  const ClockWidget({Key? key, required this.dateTime}) : super(key: key);
+  // final DateTime dateTime;
+  final int seconds;
+  const ClockWidget({Key? key, required this.seconds}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var seconds = dateTime.second.toDouble();
+
     return SleekCircularSlider(
       appearance: appearance03,
       min: 0,
-      max: 59,
-      initialValue: 59 - seconds,
+      max: Clock.maxTime,
+      initialValue: Clock.maxTime - seconds,
       innerWidget: (double value) {
-        final s = 59 - seconds.toInt() < 10
-            ? '0${59 - seconds.toInt()}'
-            : (59 - seconds.toInt()).toString();
+        final s = Clock.maxTime.toInt() - seconds.toInt() < 10
+            ? '0${Clock.maxTime.toInt() - seconds.toInt()}'
+            : (Clock.maxTime.toInt() - seconds.toInt()).toString();
         return Center(
             child: Text(
-              ' $s',
+              '$s',
               style: TextStyle(
                   color: HexColor('#A177B0'),
-                  fontSize: 40,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400),
             ));
       },
@@ -97,13 +96,13 @@ final CircularSliderAppearance appearance02 = CircularSliderAppearance(
     animationEnabled: false);
 
 final customWidth03 =
-CustomSliderWidths(trackWidth: 8, progressBarWidth: 20, shadowWidth: 40);
+CustomSliderWidths(trackWidth: 2, progressBarWidth: 10, shadowWidth: 16);
 final customColors03 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
     trackColor: HexColor('#EFC8FC').withOpacity(0.3),
     progressBarColor: HexColor('#A177B0'),
     shadowColor: HexColor('#EFC8FC'),
-    shadowStep: 20.0,
+    shadowStep: 15.0,
     shadowMaxOpacity: 0.3);
 
 final CircularSliderAppearance appearance03 = CircularSliderAppearance(
@@ -111,7 +110,7 @@ final CircularSliderAppearance appearance03 = CircularSliderAppearance(
   customColors: customColors03,
   startAngle: 270,
   angleRange: 360,
-  size: 210.0,
+  size: 110.0,
   animationEnabled: false,
 
 );

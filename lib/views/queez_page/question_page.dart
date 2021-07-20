@@ -31,11 +31,11 @@ class QuestionPage extends StatelessWidget {
               child: Obx(() {
                 return Column(
                   children: [
-                    Text("question from controller: " +
-                        questionPageController
-                            .questions![questionPageController.index]
-                            .question!),
-                    Text(questionPageController.index.toString()),
+                    Text(
+                        "question ${questionPageController.index.toString()} from controller: " +
+                            questionPageController
+                                .questions![questionPageController.index]
+                                .question!),
                     AnswersListView(),
                     Clock(),
                   ],
