@@ -180,7 +180,7 @@ class AccountsPageRegister extends StatelessWidget {
                         color: Theme.of(context).primaryColorDark,
                       ),
                       onTap: () {
-                        controller.togglePasswordVisiblity();
+                        controller.togglePasswordVisibility();
                       },
                     ),
                   ),
@@ -275,7 +275,7 @@ class AccountPageRegisterController extends GetxController {
   final emailController = TextEditingController();
   final passwordVisible = true.obs;
 
-  void togglePasswordVisiblity() {
+  void togglePasswordVisibility() {
     passwordVisible.value = !(passwordVisible.value);
   }
 }
