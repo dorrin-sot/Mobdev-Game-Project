@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
+import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/views/queez_page/answer_widget.dart';
 import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class QuestionPage extends StatelessWidget {
-  final String subject = Get.arguments['subject'];
+  final Subject subject = Get.arguments['subject'];
   final QuestionPageController questionPageController =
       Get.put(QuestionPageController());
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +30,18 @@ class QuestionPage extends StatelessWidget {
               child: Obx(() {
                 return Column(
                   children: [
-                    Text(
-                        "question ${questionPageController.index.toString()} from controller: " +
-                            questionPageController
-                                .questions![questionPageController.index]
-                                .question!),
-                    AnswersListView(),
-                    Clock(),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Text(
+                            "question ${questionPageController.index.toString()} from controller: " +
+                                questionPageController
+                                    .questions![questionPageController.index]
+                                    .question!),
+                      ),
+                    ),
+                    Expanded(flex: 6, child: AnswersListView()),
+                    Expanded(flex: 3, child: Clock()),
                   ],
                 );
               }),

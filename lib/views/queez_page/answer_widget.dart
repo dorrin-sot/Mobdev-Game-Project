@@ -21,14 +21,7 @@ class AnswerWidget extends StatelessWidget {
           onPressed: controller.waiting
               ? null
               : () {
-                  controller.setColor(index);
-                  print("statrt");
-                  Future.delayed(Duration(seconds: 2), () {
-                    controller.increment();
-                    controller.reset();
-                  });
-                  print("end");
-                  controller.waiting = true;
+                  controller.prepareNextQ(index, false);
                 },
           child: Text(
             answer,
