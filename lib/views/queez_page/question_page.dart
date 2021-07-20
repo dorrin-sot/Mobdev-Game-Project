@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
 import 'package:mobdev_game_project/views/queez_page/answer_widget.dart';
+import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class QuestionPage extends StatelessWidget {
@@ -35,7 +36,8 @@ class QuestionPage extends StatelessWidget {
                             .questions![questionPageController.index]
                             .question!),
                     Text(questionPageController.index.toString()),
-                    AnswersGridView(),
+                    AnswersListView(),
+                    Clock(),
                   ],
                 );
               }),
@@ -46,12 +48,12 @@ class QuestionPage extends StatelessWidget {
     );
   }
 
-  GridView AnswersGridView() {
+  ListView AnswersListView() {
     questionPageController.correctAnswer = questionPageController
-        .questions![questionPageController.index].correctAns! -1;
-    return GridView.count(
+            .questions![questionPageController.index].correctAns! -
+        1;
+    return ListView(
       shrinkWrap: true,
-      crossAxisCount: 2,
       children: List.generate(
         4,
         (index) => AnswerWidget(
