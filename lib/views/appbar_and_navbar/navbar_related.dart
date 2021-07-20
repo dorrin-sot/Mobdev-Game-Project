@@ -11,7 +11,6 @@ class CustomBottomNavBar extends CurvedNavigationBar {
     final double iconSize = 30;
     int indexx = -1;
     final c = Get.find<AppController>();
-
     final navBarItems = <NavBarItem>[
       NavBarItem(
         index: ++indexx,

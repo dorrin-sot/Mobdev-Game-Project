@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/user.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 
 class AccountsPageProfile extends StatelessWidget {
-  const AccountsPageProfile({Key? key}) : super(key: key);
+  //const AccountsPageProfile({Key? key}) : super(key: key);
+
+  final appController = Get.find<AppController>();
 
   @override
   Widget build(BuildContext context) => Center(
-        child: const Text('AccountsPageProfile'),
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/userPhoto.png',
+              width: MediaQuery.of(context).size.width / 3,
+              height: MediaQuery.of(context).size.width / 3,
+            ),
+            Text(
+              appController.currentUser!.username!,
+              style: TextStyle(color: Colors.black),
+            )
+          ],
+        ),
       );
 }
 
@@ -46,7 +61,9 @@ class AccountsPageLogin extends StatelessWidget {
                             : Icons.visibility_off,
                         color: Theme.of(context).primaryColorDark,
                       ),
-                      onTap:() {controller.togglePasswordVisiblity();},
+                      onTap: () {
+                        controller.togglePasswordVisiblity();
+                      },
                     ),
                   ),
                 )),
@@ -148,24 +165,26 @@ class AccountsPageRegister extends StatelessWidget {
               ),
             ),
             Obx(() => TextField(
-              obscureText: controller.passwordVisible.value,
-              controller: controller.passwordController,
-              textAlign: TextAlign.right,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'رمز عبور',
-                prefixIcon: InkWell(
-                  child: Icon(
-                    // Based on passwordVisible state choose the icon
-                    (controller.passwordVisible.value)
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
+                  obscureText: controller.passwordVisible.value,
+                  controller: controller.passwordController,
+                  textAlign: TextAlign.right,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'رمز عبور',
+                    prefixIcon: InkWell(
+                      child: Icon(
+                        // Based on passwordVisible state choose the icon
+                        (controller.passwordVisible.value)
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      onTap: () {
+                        controller.togglePasswordVisiblity();
+                      },
+                    ),
                   ),
-                  onTap:() {controller.togglePasswordVisiblity();},
-                ),
-              ),
-            )),
+                )),
             TextButton(
                 onPressed: () {
                   User.forParse(controller.usernameController.text,
