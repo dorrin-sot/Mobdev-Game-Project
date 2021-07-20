@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppController extends GetxController {
-  bool? isLoggedIn;
+  RxBool isLoggedIn = false.obs;
   User? currentUser;
 
   @override
@@ -133,9 +133,9 @@ class AppController extends GetxController {
     print('AppController::prefsUpdate');
     final prefs = await SharedPreferences.getInstance();
 
-    prefs.setBool('isLoggedIn', isLoggedIn!);
+    prefs.setBool('isLoggedIn', isLoggedIn.isTrue);
 
-    if (isLoggedIn!) {
+    if (isLoggedIn.isTrue) {
       prefs.setString('curUserUN', currentUser!.username!);
       prefs.setString('curUserPW', currentUser!.password!);
     }

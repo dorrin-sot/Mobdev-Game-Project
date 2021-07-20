@@ -11,19 +11,13 @@ import 'package:mobdev_game_project/misc/custom_icons_icons.dart';
 import 'package:mobdev_game_project/models/user.dart';
 
 class CustomAppbar extends AppBar {
-  static AppBar build() {
-    return AppBar(
-      title: GetBuilder<AppController>(
-        builder: (c) {
-          if (c.isLoggedIn == null || !c.isLoggedIn!) {
-            return const Text('Quiz boy 9000');
-          } else {
-            return signedIn();
-          }
-        },
-      ),
-    );
-  }
+  static AppBar build() => AppBar(
+        title: Obx(
+          () => Get.find<AppController>().isLoggedIn.isFalse
+              ? const Text('Quiz boy 9000')
+              : signedIn(),
+        ),
+      );
 
   static Widget signedIn() => Row(
         children: [

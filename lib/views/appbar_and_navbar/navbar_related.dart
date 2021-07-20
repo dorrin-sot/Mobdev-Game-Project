@@ -8,10 +8,29 @@ class CustomBottomNavBar extends CurvedNavigationBar {
   CustomBottomNavBar() : super(items: []);
 
   static CurvedNavigationBar build() {
-    final double iconSize = 30;
+    return CurvedNavigationBar(
+      index: 1,
+      items: NavBarItem.allItems.map((e) => e.child).toList(),
+      onTap: (index) => Get.offNamed(
+        NavBarItem.allItems
+            .where((element) => element.index == index)
+            .first
+            .pageDest!,
+      ),
+    );
+  }
+}
+
+class NavBarItem {
+  final int index;
+  final Widget child;
+  late String? pageDest;
+
+  static List<NavBarItem> get allItems {
     int indexx = -1;
+    final double iconSize = 30;
     final c = Get.find<AppController>();
-    final navBarItems = <NavBarItem>[
+    return <NavBarItem>[
       NavBarItem(
         index: ++indexx,
         child: Icon(
@@ -34,25 +53,10 @@ class CustomBottomNavBar extends CurvedNavigationBar {
           Icons.account_circle,
           size: iconSize,
         ),
-        pageDest: '/account/' +
-            (c.isLoggedIn == null  ? 'login' : (c.isLoggedIn! ? 'login' : 'profile')),
+        pageDest: '/account/' + (c.isLoggedIn.isFalse ? 'login' : 'profile'),
       ),
     ];
-
-    return CurvedNavigationBar(
-      index: 1,
-      items: navBarItems.map((e) => e.child).toList(),
-      onTap: (index) => Get.offNamed(
-        navBarItems.where((element) => element.index == index).first.pageDest!,
-      ),
-    );
   }
-}
-
-class NavBarItem {
-  final int index;
-  final Widget child;
-  late String? pageDest;
 
   NavBarItem({required this.index, required this.child, this.pageDest});
 }
