@@ -61,6 +61,7 @@ flutter:
   assets:
     - .env
     - images/no_net_image.webp
+    - assets/images/
 
 
   fonts:
