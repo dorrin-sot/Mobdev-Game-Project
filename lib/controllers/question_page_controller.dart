@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
+import 'package:mobdev_game_project/models/subject.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
@@ -68,39 +69,38 @@ class QuestionPageController extends GetxController {
     }
   }
 
-  Future<List?> fetchQuestions(String subjectName) async {
-    await Future.delayed(Duration(seconds: 2));
-    questions = [
-      Question(
-          question: "q1",
-          answers: ["ans1", "ans2", "ans3", "ans4"],
-          correctAns: 1,
-          subject: null),
-      Question(
-          question: "q2",
-          answers: ["ans1", "ans2", "ans3", "ans4"],
-          correctAns: 2,
-          subject: null),
-      Question(
-          question: "q3",
-          answers: ["ans1", "ans2", "ans3", "ans4"],
-          correctAns: 3,
-          subject: null),
-      Question(
-          question: "q4",
-          answers: ["ans1", "ans2", "ans3", "ans4"],
-          correctAns: 4,
-          subject: null),
-      Question(
-          question: "q5",
-          answers: ["ans1", "ans2", "ans3", "ans4"],
-          correctAns: 1,
-          subject: null),
-    ];
+  Future<List?> fetchQuestions(Subject subject) async {
+    questions =await Question.getQsFromDBForQuiz(subject: subject);
+    print(questions!.toList().toString());
+    // await Future.delayed(Duration(seconds: 2));
+    // questions = [
+    //   Question(
+    //       question: "q1",
+    //       answers: ["ans1", "ans2", "ans3", "ans4"],
+    //       correctAns: 1,
+    //       subject: null),
+    //   Question(
+    //       question: "q2",
+    //       answers: ["ans1", "ans2", "ans3", "ans4"],
+    //       correctAns: 2,
+    //       subject: null),
+    //   Question(
+    //       question: "q3",
+    //       answers: ["ans1", "ans2", "ans3", "ans4"],
+    //       correctAns: 3,
+    //       subject: null),
+    //   Question(
+    //       question: "q4",
+    //       answers: ["ans1", "ans2", "ans3", "ans4"],
+    //       correctAns: 4,
+    //       subject: null),
+    //   Question(
+    //       question: "q5",
+    //       answers: ["ans1", "ans2", "ans3", "ans4"],
+    //       correctAns: 1,
+    //       subject: null),
+    // ];
     return questions;
-    // questions = await Question.getQsFromDBForQuiz(subjectName: subjectName);
-    // print("result from server: "+ questions!.toList().toString() );
-    // return questions;
   }
 
   void prepareNextQ(int index, bool timeIsUp) {
