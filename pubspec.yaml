@@ -61,12 +61,19 @@ flutter:
     - .env
     - images/no_net_image.webp
     - assets/images/
+    - assets/sounds/
 
 
   fonts:
     - family:  CustomIcons
       fonts:
         - asset: fonts/CustomIcons.ttf
+    - family:  Traffic
+      fonts:
+        - asset: fonts/B-Traffic.ttf
+    - family:  Lalezar
+      fonts:
+        - asset: fonts/Lalezar-Regular.ttf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

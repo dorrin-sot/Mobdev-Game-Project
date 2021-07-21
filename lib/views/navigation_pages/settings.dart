@@ -4,14 +4,18 @@ import 'package:get/get.dart';
 class SettingsPage extends StatelessWidget {
   //const SettingsPage({Key? key}) : super(key: key);
   final controller = SettingPageController();
-
   @override
   Widget build(BuildContext context) => Center(
           child: Column(
         children: [
-          Text("تنظیمات"),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text("تنظیمات", style: TextStyle(color: Colors.black,fontFamily: 'Traffic')),
+          ),
           Row(children: [
-            Obx(() => Slider(
+            Obx(() => Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Slider(
                   value: controller.songValue.value,
                   min: 0,
                   max: 100,
@@ -19,11 +23,13 @@ class SettingsPage extends StatelessWidget {
                   onChanged: (double value) {
                     controller.changeSongValue(value);
                   },
-                )),
-            Text(
-              "موسیقی",
-              style: TextStyle(color: Colors.black),
-            )
+                ))),
+            Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "موسیقی",
+                  style: TextStyle(color: Colors.black,fontFamily: 'Lalezar',fontSize: 20),
+                ))
           ])
         ],
       ));

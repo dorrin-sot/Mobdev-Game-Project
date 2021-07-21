@@ -11,14 +11,13 @@ import 'package:mobdev_game_project/views/queez_page/question_page.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'models/question.dart';
 import 'models/subject.dart';
 import 'models/user.dart';
 
 Future main() async {
+ // await initServices();
   WidgetsFlutterBinding.ensureInitialized();
-
   await dotenv.load(fileName: ".env");
 
   final keyApplicationId = dotenv.env['keyApplicationId']!;
@@ -38,13 +37,23 @@ Future main() async {
 
   final c = AppController();
   Get.put(c);
-
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+//initServices() async {
+//  await Get.putAsync(()=>SettingsService().init());
+//}
+//
+//class SettingsService extends GetxService {
+//  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
+//
+//  init() async {
+//    audioPlayer.open(Audio('assets/sounds/Main-Theme.mp3'));
+//  }
+//}
 
+class MyApp extends StatelessWidget {
+  //const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
