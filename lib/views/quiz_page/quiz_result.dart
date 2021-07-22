@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class QuizResultPage extends StatelessWidget {
-  final int num, correct, wrong, empty;
-
+  final int num = Get.arguments['num'],
+      correct = Get.arguments['correct'],
+      wrong = Get.arguments['wrong'],
+      empty = Get.arguments['empty'];
   //todo make this page look less like shet
-  QuizResultPage(this.num, this.correct, this.wrong, this.empty);
 
   @override
   Widget build(BuildContext context) {

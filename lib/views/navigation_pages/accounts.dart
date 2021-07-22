@@ -1,9 +1,10 @@
+import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/user.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
-import 'package:auth_buttons/auth_buttons.dart';
 
 class AccountsPageProfile extends StatelessWidget {
   //const AccountsPageProfile({Key? key}) : super(key: key);
@@ -18,8 +19,8 @@ class AccountsPageProfile extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: Image.asset(
                   'assets/images/userPhoto.png',
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: MediaQuery.of(context).size.width / 3,
+                  width: Get.width / 3,
+                  height: Get.width / 3,
                 )),
             Padding(
                 padding: EdgeInsets.all(16.0),
@@ -89,7 +90,7 @@ class AccountsPageLogin extends StatelessWidget {
                           .login()
                           .then((response) {
                         if (response.success) {
-                          Get.off(HomePage());
+                          Get.find<NavBarController>().setCurrent('/home');
                           Get.snackbar(
                               "عملیات موفق", "با موفقیت وارد اکانتت شدی",
                               backgroundColor: Colors.black,
@@ -152,9 +153,8 @@ class AccountsPageLogin extends StatelessWidget {
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
-                    onPressed: () {
-                      Get.to(AccountsPageRegister());
-                    },
+                    onPressed: () => Get.find<NavBarController>()
+                        .setCurrent('/account/register'),
                     child: Text("اگه اکانت نداری برای ثبت نام کلیک کن")))
           ],
         ),
@@ -228,7 +228,7 @@ class AccountsPageRegister extends StatelessWidget {
                           .signUp()
                           .then((response) {
                         if (response.success) {
-                          Get.off(HomePage());
+                          Get.find<NavBarController>().setCurrent('/home');
                           Get.snackbar(
                               "عملیات موفق", "ثبت نامت با موفقیت انجام شد",
                               backgroundColor: Colors.black,

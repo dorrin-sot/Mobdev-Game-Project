@@ -8,15 +8,13 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
-import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
-import 'package:mobdev_game_project/views/navigation_pages/home.dart';
-import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
 import 'package:mobdev_game_project/views/quiz_page/question_page.dart';
-import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
+import 'package:mobdev_game_project/views/quiz_page/quiz_result.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'models/question.dart';
 import 'models/subject.dart';
 import 'models/user.dart';
@@ -64,50 +62,38 @@ class MyApp extends StatelessWidget {
   //const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: CustomAppbar.build(),
-        bottomNavigationBar: CustomBottomNavBar.build(),
-        backgroundColor: Colors.white,
-        body: GetMaterialApp(
-          initialRoute: '/home',
-          getPages: [
-            GetPage(
-                name: '/home',
-                page: () => HomePage(),
-                transition: Transition.noTransition),
-            GetPage(
-                name: '/settings',
-                page: () => SettingsPage(),
-                transition: Transition.noTransition),
-            GetPage(
-                name: '/account/profile',
-                page: () => AccountsPageProfile(),
-                transition: Transition.noTransition),
-            GetPage(
-                name: '/account/login',
-                page: () => AccountsPageLogin(),
-                transition: Transition.noTransition),
-            GetPage(
-                name: '/account/register',
-                page: () => AccountsPageRegister(),
-                transition: Transition.noTransition),
-            GetPage(
-                name: '/no-network',
-                page: () => NoNetworkPage(),
-                transition: Transition.rightToLeft),
-            GetPage(
-                name: '/subjects',
-                page: () => SubjectPage(),
-                transition: Transition.rightToLeft),
-            GetPage(
-                name: '/question_page',
-                page: () => QuestionPage(),
-                transition: Transition.rightToLeft),
-          ],
-          debugShowCheckedModeBanner: false,
-        ),
-      ),
+    return GetMaterialApp(
+      initialRoute: '/main-pages',
+      getPages: [
+        GetPage(
+            name: '/main-pages',
+            page: () =>
+                Scaffold(
+                  appBar: CustomAppbar.build(),
+                  bottomNavigationBar: CustomBottomNavBar.build(),
+                  backgroundColor: Colors.white,
+                  body: GetBuilder<NavBarController>(
+                    init: Get.find<NavBarController>(),
+                    builder: (c) {
+                      final body = c.currentPage.value;
+                      print('current page = $body');
+                      return body;
+                    },
+                  ),
+                ),
+            transition: Transition.noTransition),
+        GetPage(
+            name: '/no-network',
+            page: () => NoNetworkPage(),
+            transition: Transition.rightToLeft),
+        GetPage(
+            name: '/question_page',
+            page: () => QuestionPage(),
+            transition: Transition.rightToLeft),
+        GetPage(name: '/quiz-res',
+            page: () => QuizResultPage(),
+            transition: Transition.rightToLeft),
+      ],
       debugShowCheckedModeBanner: false,
     );
   }
