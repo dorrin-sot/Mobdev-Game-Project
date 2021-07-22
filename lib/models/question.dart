@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/models/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class Question extends ParseObject {
+class Question extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'Question';
 
   static const String keyQuestion = 'question';
@@ -21,14 +21,14 @@ class Question extends ParseObject {
   Question({this.question, this.answers, this.correctAns, this.subject})
       : super(_keyTableName);
 
-  factory Question.forParse(ParseObject parseObj, Subject subject) {
-    return Question(
-        question: parseObj.get(keyQuestion),
-        answers: parseObj.get(keyAnswers)!.toString().getList(),
-        correctAns: parseObj.get(keyCorrectAns),
-        subject: subject)
-      ..objectId = parseObj.objectId;
-  }
+  Question.clone() : this();
+
+  factory Question.fromJson(Map<String, dynamic> json, subject) => Question(
+        question: json[keyQuestion],
+        answers: json[keyAnswers].toString().getList(),
+        correctAns: json[keyCorrectAns],
+        subject: subject,
+      )..objectId = json['objectId'];
 
   static Future<List<Question>> getQsFromDBForQuiz(Subject subject,
       {int numberOfQs = QUESTIONS_IN_QUIZ}) async {
@@ -39,18 +39,22 @@ class Question extends ParseObject {
 
     final query = QueryBuilder<ParseObject>(Question())
       ..whereMatchesQuery(
-          'subject',
+          keySubject,
           QueryBuilder<ParseObject>(Subject())
-            ..whereEqualTo('name', subject.name))
+            ..whereEqualTo(Subject.keyName, subject.name))
       ..whereDoesNotMatchQuery(
           'objectId',
           QueryBuilder<ParseObject>(Question())
-            ..whereRelatedTo('allQuestions', '_User', curUser.objectId!))
+            ..whereRelatedTo(User.keyAllQuestions, '_User', curUser.objectId!))
       ..setLimit(numberOfQs);
 
-    return query.query().then((response) => (response.results!..shuffle())
-        .map((qParse) => Question.forParse(qParse as ParseObject, subject))
-        .toList());
+    return query.query().then((response) async {
+      final allQList = <Question>[];
+      for (ParseObject parseQ in response.results!)
+        allQList.add(Question.fromJson(parseQ.getJsonMap(), subject));
+
+      return allQList;
+    });
   }
 
   // if answer is null means user ran out of time otherwise check if answer was correct

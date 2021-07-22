@@ -84,7 +84,7 @@ class AccountsPageLogin extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
                     onPressed: () {
-                      User.forParse(controller.usernameController.text,
+                      User(controller.usernameController.text,
                               controller.passwordController.text)
                           .login()
                           .then((response) {
@@ -141,7 +141,7 @@ class AccountsPageLogin extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: GoogleAuthButton(
                   onPressed: () {
-                    // your implementation
+                    // todo your implementation
                   },
                   isLoading: false,
                   style: const AuthButtonStyle(
@@ -222,7 +222,7 @@ class AccountsPageRegister extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
                     onPressed: () {
-                      User.forParse(controller.usernameController.text,
+                      User.forParseRegister(controller.usernameController.text,
                               controller.passwordController.text,
                               emailAddress: controller.emailController.text)
                           .signUp()

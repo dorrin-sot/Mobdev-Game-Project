@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -9,7 +13,8 @@ import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
 import 'package:mobdev_game_project/views/queez_page/question_page.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/question.dart';
 import 'models/subject.dart';
@@ -19,6 +24,8 @@ Future main() async {
  // await initServices();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await Firebase.initializeApp();
 
   final keyApplicationId = dotenv.env['keyApplicationId']!;
   final keyParseServerUrl = dotenv.env['keyParseServerUrl']!;
@@ -32,7 +39,7 @@ Future main() async {
       },
       parseUserConstructor: (username, password, emailAddress,
               {client, debug, sessionToken}) =>
-          User(username!, password!),
+          User(username, password),
       debug: true);
 
   final c = AppController();
@@ -117,36 +124,46 @@ class AppController extends GetxController {
 
   prefsOnInit() async {
     print('AppController::prefsOnInit');
-    final prefs = await SharedPreferences.getInstance();
 
-    bool? isLoggedInPref = prefs.getBool('isLoggedIn');
+    await getUserFromPrefs(); // get from local
 
-    if (isLoggedInPref == null) {
-      prefs.setBool('isLoggedIn', false);
-    }
+    // update from server in background
+    if (currentUser != null)
+      unawaited(Future.sync(() {
+        return currentUser!.getUpdatedUser(debug: true).then((response) {
+          if (!response.success) return;
+          print('updated to ${response.result}');
+          saveUserInPrefs(response.result);
+        });
+      }));
 
-    prefs.reload();
-    isLoggedInPref = prefs.getBool('isLoggedIn');
-    String? curUserUNPref = prefs.getString('curUserUN');
-    String? curUserPWPref = prefs.getString('curUserPW');
-
-    if (isLoggedInPref!) {
-      User(
-        curUserUNPref!,
-        curUserPWPref!,
-      ).login();
-    }
+    update();
   }
 
-  prefsUpdate() async {
-    print('AppController::prefsUpdate');
+  Future<void> getUserFromPrefs() async {
+    print('AppController::getUserFromPrefs');
     final prefs = await SharedPreferences.getInstance();
 
-    prefs.setBool('isLoggedIn', isLoggedIn.isTrue);
+    String? curUser = await prefs.getString('curUser');
 
-    if (isLoggedIn.isTrue) {
-      prefs.setString('curUserUN', currentUser!.username!);
-      prefs.setString('curUserPW', currentUser!.password!);
+    if (curUser != null && curUser != 'null') {
+      currentUser = User.fromJsonn(jsonDecode(curUser));
+      print('curUser: $currentUser');
     }
+    isLoggedIn.value = curUser != null && curUser != 'null';
+    update();
   }
+
+  Future<User?> saveUserInPrefs(ParseUser? user) async {
+    print('AppController::saveUserInPrefs');
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('curUser', jsonEncode(user));
+
+    getUserFromPrefs();
+  }
+}
+
+extension ObjectMapGet on Object {
+  Map<String, dynamic> getJsonMap() => jsonDecode(jsonEncode(this));
 }

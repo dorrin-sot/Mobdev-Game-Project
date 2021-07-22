@@ -1,6 +1,7 @@
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:mobdev_game_project/main.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class Subject extends ParseObject {
+class Subject extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'Subject';
 
   static const String keyName = 'name';
@@ -8,23 +9,32 @@ class Subject extends ParseObject {
 
   Subject({this.name}) : super(_keyTableName);
 
-  factory Subject.forParse(ParseObject parseObj) =>
-      Subject(name: parseObj.get(keyName))..objectId = parseObj.objectId;
+  Subject.clone() : this();
+
+  factory Subject.fromJson(Map<String, dynamic> json) =>
+      Subject(name: json[keyName])..objectId = json['objectId'];
+
+  @override
+  clone(Map<String, dynamic> map) => Subject.clone()..fromJson(map);
 
   static Future<Subject> getFromDB(String subjectName) =>
       (QueryBuilder<ParseObject>(Subject())..whereEqualTo(keyName, subjectName))
           .find()
           .then((subjectList) {
         assert(subjectList.isNotEmpty);
-        return Subject.forParse(subjectList.first);
+        return Subject.fromJson(subjectList.first.getJsonMap());
       });
 
   static Future<List<Subject>> getAllFromDB() =>
-      (QueryBuilder<ParseObject>(Subject())).find().then((subjectList) =>
-          subjectList.map((parseObj) => Subject.forParse(parseObj)).toList());
+      (QueryBuilder<ParseObject>(Subject()))
+          .find()
+          .then((subjectList) => subjectList.map((parseObj) {
+                print('subject = ${parseObj.getJsonMap()}');
+                return Subject.fromJson(parseObj.getJsonMap());
+              }).toList());
 
   @override
   String toString() {
-    return 'Subject{name: $name}';
+    return '${super.toString()}   Subject{name: $name}';
   }
 }

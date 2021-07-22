@@ -75,7 +75,7 @@ class QuestionPageController extends GetxController {
   Future<List<Question>?> fetchQuestions(Subject subject) async {
     questions = await Question.getQsFromDBForQuiz(subject);
     _results[0] = questions!.length;
-    print('res = ${questions!.toList().toString()}');
+    print('res = ${questions!}');
     return questions;
   }
 

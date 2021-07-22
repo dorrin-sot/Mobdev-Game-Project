@@ -22,7 +22,7 @@ class QuestionPage extends StatelessWidget {
         brightness: Brightness.light,
       ),
       body: FutureBuilder(
-        future: questionPageController.fetchQuestions(subject),
+        future: questionPageController.fetchQuestions(subject.name!),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData ||
               (snapshot.data as List<Question>).length == 0) {
