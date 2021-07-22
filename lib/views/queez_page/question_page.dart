@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
+import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/views/queez_page/answer_widget.dart';
 import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
@@ -20,10 +21,10 @@ class QuestionPage extends StatelessWidget {
         brightness: Brightness.light,
       ),
       body: FutureBuilder(
-        future: questionPageController.fetchQuestions(subject.name!),
+        future: questionPageController.fetchQuestions(subject),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData ||
-              (snapshot.data as List<dynamic>).length == 0) {
+              (snapshot.data as List<Question>).length == 0) {
             return CircularProgressIndicator();
           } else {
             return Center(

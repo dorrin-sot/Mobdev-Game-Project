@@ -69,11 +69,10 @@ class QuestionPageController extends GetxController {
     }
   }
 
-  Future<List?> fetchQuestions(String subjectName) async {
-    final res = await Question.getQsFromDBForQuiz(
-        await Subject.getFromDB(subjectName));
-    print('res = $res');
-    return res;
+  Future<List<Question>?> fetchQuestions(Subject subject) async {
+    questions = await Question.getQsFromDBForQuiz(subject);
+    print('res = ${questions!.toList().toString()}');
+    return questions;
   }
 
   void prepareNextQ(int index, bool timeIsUp) {
