@@ -14,9 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'models/question.dart';
 import 'models/subject.dart';
 import 'models/user.dart';
+import 'package:just_audio/just_audio.dart';
 
 Future main() async {
- // await initServices();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
@@ -39,18 +39,6 @@ Future main() async {
   Get.put(c);
   runApp(MyApp());
 }
-
-//initServices() async {
-//  await Get.putAsync(()=>SettingsService().init());
-//}
-//
-//class SettingsService extends GetxService {
-//  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
-//
-//  init() async {
-//    audioPlayer.open(Audio('assets/sounds/Main-Theme.mp3'));
-//  }
-//}
 
 class MyApp extends StatelessWidget {
   //const MyApp({Key? key}) : super(key: key);
@@ -108,11 +96,15 @@ class MyApp extends StatelessWidget {
 class AppController extends GetxController {
   RxBool isLoggedIn = false.obs;
   User? currentUser;
+  final player = AudioPlayer();
+  double volume = 0.1;
+  var duration;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     await prefsOnInit();
+    await setMusic();
   }
 
   prefsOnInit() async {
@@ -120,7 +112,10 @@ class AppController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
 
     bool? isLoggedInPref = prefs.getBool('isLoggedIn');
-
+    double? musicVolume = prefs.getDouble('musicVolume');
+    if(musicVolume!=null)
+      volume=musicVolume;
+    print("VVVVVVVV:    "+volume.toString());
     if (isLoggedInPref == null) {
       prefs.setBool('isLoggedIn', false);
     }
@@ -143,10 +138,28 @@ class AppController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setBool('isLoggedIn', isLoggedIn.isTrue);
+    prefs.setDouble('musicVolume', volume);
+    print("VOLUME:________: "+volume.toString());
 
     if (isLoggedIn.isTrue) {
       prefs.setString('curUserUN', currentUser!.username!);
       prefs.setString('curUserPW', currentUser!.password!);
     }
+  }
+
+  setMusic() async {
+    duration = await player.setAsset('assets/sounds/Main-Theme.mp3');
+    await player.setVolume(volume);
+    print("vo;oume after  "+volume.toString());
+    player.play();
+    await player.setLoopMode(LoopMode.one);
+  }
+
+  setMusicVolume(double value) async {
+    await player.setVolume(value);
+    if (value == 0)
+      player.pause();
+    else
+      player.play();
   }
 }

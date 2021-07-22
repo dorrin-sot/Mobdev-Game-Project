@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../main.dart';
+
 class SettingsPage extends StatelessWidget {
   //const SettingsPage({Key? key}) : super(key: key);
   final controller = SettingPageController();
@@ -22,7 +24,7 @@ class SettingsPage extends StatelessWidget {
                   divisions: 20,
                   onChanged: (double value) {
                     controller.changeSongValue(value);
-                  },
+                  },onChangeEnd:(double value)=> controller.saveSongValue(value),
                 ))),
             Padding(
                 padding: EdgeInsets.all(16.0),
@@ -36,9 +38,27 @@ class SettingsPage extends StatelessWidget {
 }
 
 class SettingPageController extends GetxController {
-  final songValue = 50.0.obs;
+  final songValue = 80.0.obs;
+  final c = Get.find<AppController>();
 
+  @override
+  Future<void> onInit() async{
+    super.onInit();
+    await setFirstVolume();
+  }
+  setFirstVolume() async {
+    songValue.value=c.volume;
+    print("set volume");
+  }
   void changeSongValue(double value) {
-    songValue.value = value;
+    songValue.value=value;
+    c.setMusicVolume(value/100);
+
+  }
+  void saveSongValue(double value) {
+    c.volume=value/100;
+    c.prefsUpdate();
+    c.update();
+
   }
 }
