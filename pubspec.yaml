@@ -62,7 +62,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
-    - images/no_net_image.webp
+    - assets/images/no_net_image.webp
     - assets/images/
     - assets/sounds/
 
@@ -70,13 +70,13 @@ flutter:
   fonts:
     - family:  Roya
       fonts:
-        - asset: fonts/Far_Roya.ttf
+        - asset: assets/fonts/Far_Roya.ttf
     - family:  Traffic
       fonts:
-        - asset: fonts/B-Traffic.ttf
+        - asset: assets/fonts/B-Traffic.ttf
     - family:  Lalezar
       fonts:
-        - asset: fonts/Lalezar-Regular.ttf
+        - asset: assets/fonts/Lalezar-Regular.ttf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
