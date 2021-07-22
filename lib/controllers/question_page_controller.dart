@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
-import 'package:mobdev_game_project/views/quiz_page/quiz_result.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
 
@@ -95,7 +94,12 @@ class QuestionPageController extends GetxController {
   void resetForNextQOrQuit() {
     //todo quit function
     if (_questionIndex == questions!.length - 1) {
-      Get.to(QuizResultPage(_results[0], _results[1], _results[2], _results[3]));
+      Get.toNamed('/quiz-res', arguments: {
+        'num': _results[0],
+        'correct': _results[1],
+        'wrong': _results[2],
+        'empty': _results[3]
+      });
       return;
     }
     _questionIndex += 1;

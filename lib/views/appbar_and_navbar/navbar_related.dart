@@ -3,28 +3,88 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:mobdev_game_project/main.dart';
+import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
+import 'package:mobdev_game_project/views/navigation_pages/home.dart';
+import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
+import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 
 class CustomBottomNavBar extends CurvedNavigationBar {
-  CustomBottomNavBar() : super(items: []);
+  CustomBottomNavBar({
+    required Key key,
+    required int index,
+    required List<Widget> items,
+    required void Function(int) onTap,
+  }) : super(key: key, index: index, items: items, onTap: onTap);
 
-  static CurvedNavigationBar build() {
-    return CurvedNavigationBar(
+  factory CustomBottomNavBar.build() {
+    final c = Get.put(NavBarController());
+
+    return CustomBottomNavBar(
       index: 1,
-      items: NavBarItem.allItems.map((e) => e.child).toList(),
-      onTap: (index) => Get.offNamed(
-        NavBarItem.allItems
-            .where((element) => element.index == index)
-            .first
-            .pageDest!,
-      ),
+      key: c.navbarStateKey,
+      items: NavBarItem.allItems.map((e) => e.iconWidget!).toList(),
+      onTap: (index) {
+        c.setCurrent(
+          NavBarController.getNavBarItem(index).pageDest,
+          setIndexToo: false,
+        );
+      },
     );
+    // return super(
+    //   key: navbarStateKey,
+    //   index: c.index.value,
+    //   items: NavBarItem.allItems.map((e) => e.iconWidget!).toList(),
+    //   onTap: (index) {
+    //     c.setCurrent(NavBarController.getNavBarItem(index).pageDest);
+    //     c.index.value = index;
+    //   },
+    // );
+  }
+}
+
+class NavBarController extends GetxController {
+  var currentPage = getNavBarItem(1).body.obs;
+
+  late GlobalKey<CurvedNavigationBarState> navbarStateKey = GlobalKey();
+
+  static NavBarItem getNavBarItem(int index) =>
+      NavBarItem.allItems.firstWhere((element) => element.index == index);
+
+  setCurrent(String currentPageName, {bool setIndexToo = true}) {
+    print('NavBarController::setCurrent');
+    final navbarItem = NavBarItem.allItems.firstWhere(
+      (element) => element.pageDest == currentPageName,
+      orElse: () {
+        Widget? body;
+        switch (currentPageName) {
+          case '/account/register':
+            body = AccountsPageRegister();
+            break;
+          case '/subjects':
+            body = SubjectPage();
+            break;
+          default:
+            body = null; // shouldnt happen
+        }
+        return NavBarItem(
+          pageDest: currentPageName,
+          body: body!,
+        );
+      },
+    );
+    if (setIndexToo && navbarItem.index != null) {
+      navbarStateKey.currentState!.setPage(navbarItem.index!);
+    }
+    currentPage.value = navbarItem.body;
+    update();
   }
 }
 
 class NavBarItem {
-  final int index;
-  final Widget child;
-  late String? pageDest;
+  final int? index;
+  final Widget? iconWidget;
+  final Widget body;
+  late String pageDest;
 
   static List<NavBarItem> get allItems {
     int indexx = -1;
@@ -33,30 +93,44 @@ class NavBarItem {
     return <NavBarItem>[
       NavBarItem(
         index: ++indexx,
-        child: Icon(
+        iconWidget: Icon(
           Icons.settings,
           size: iconSize,
         ),
         pageDest: '/settings',
+        body: SettingsPage(),
       ),
       NavBarItem(
         index: ++indexx,
-        child: Icon(
+        iconWidget: Icon(
           Icons.home,
           size: iconSize,
         ),
         pageDest: '/home',
+        body: HomePage(),
       ),
       NavBarItem(
-        index: ++indexx,
-        child: Icon(
-          Icons.account_circle,
-          size: iconSize,
-        ),
-        pageDest: '/account/' + (c.isLoggedIn.isFalse ? 'login' : 'profile'),
-      ),
+          index: ++indexx,
+          iconWidget: Icon(
+            Icons.account_circle,
+            size: iconSize,
+          ),
+          pageDest: '/account/' + (c.isLoggedIn.isFalse ? 'login' : 'profile'),
+          body: (c.isLoggedIn.isFalse
+              ? AccountsPageLogin()
+              : AccountsPageProfile())),
     ];
   }
 
-  NavBarItem({required this.index, required this.child, this.pageDest});
+  NavBarItem({
+    this.index,
+    this.iconWidget,
+    required this.pageDest,
+    required this.body,
+  });
+
+  @override
+  String toString() {
+    return 'NavBarItem{index: $index, iconWidget: $iconWidget, body: $body, pageDest: $pageDest}';
+  }
 }

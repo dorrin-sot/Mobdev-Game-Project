@@ -104,7 +104,6 @@ class HeartController extends GetxController {
     super.onInit();
 
     await currentUser.updateHearts().then((value) => scheduleUpdateHeart());
-    ;
   }
 
   void scheduleUpdateHeart() {
