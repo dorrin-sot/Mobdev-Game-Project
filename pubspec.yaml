@@ -44,6 +44,7 @@ dependencies:
   parse_server_sdk_flutter: ^3.1.0
   async: ^2.7.0
   pedantic: ^1.11.1
+  animated_text_kit: ^4.2.1
   just_audio: ^0.9.2
 
 dev_dependencies:
@@ -68,9 +69,9 @@ flutter:
 
 
   fonts:
-    - family:  CustomIcons
+    - family:  Roya
       fonts:
-        - asset: fonts/CustomIcons.ttf
+        - asset: fonts/Far_Roya.ttf
     - family:  Traffic
       fonts:
         - asset: fonts/B-Traffic.ttf

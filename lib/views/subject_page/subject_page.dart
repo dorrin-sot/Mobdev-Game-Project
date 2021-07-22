@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mobdev_game_project/models/subject.dart';
+import 'package:mobdev_game_project/utils/utils.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_widget.dart';
 import 'package:mobdev_game_project/views/common/laoding.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SubjectPage extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -21,28 +20,8 @@ class SubjectPage extends StatelessWidget {
                     return LoadingSupportPage("موضوعات!");
                   } else {
                     return Column(children: [
+                      chooseText(themeData),
                       Expanded(
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Text("لطفا یکیرو انتخاب کن"),
-                                ),
-                                Wrap(children: [
-                                  Icon(Icons.favorite),
-                                  Text("24")
-                                ]),
-                              ],
-                            ),
-                          ),
-                        ),
-                        flex: 1,
-                      ),
-                      Expanded(
-                        flex: 9,
                         child: GridView.count(
                           crossAxisCount: 2,
                           childAspectRatio: 3,
@@ -59,4 +38,26 @@ class SubjectPage extends StatelessWidget {
       ),
     );
   }
+  Widget chooseText(ThemeData themeData){
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.cyanAccent, Colors.blueAccent],
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+              tileMode: TileMode.mirror)),
+      child: SizedBox(
+        height: 50,
+        child: Center(
+          child: AnimatedTextKit(
+            repeatForever: true,
+            animatedTexts: [
+              FadeAnimatedText("لطفا یکیرو انتخاب کن",textStyle: themeData.textTheme.headline6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
+
