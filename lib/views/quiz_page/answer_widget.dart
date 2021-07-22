@@ -19,7 +19,7 @@ class AnswerWidget extends StatelessWidget {
       child: Obx(() {
         return ElevatedButton(
           onPressed: controller.waiting
-              ? null
+              ? (){}
               : () {
                   controller.prepareNextQ(index, false);
                 },

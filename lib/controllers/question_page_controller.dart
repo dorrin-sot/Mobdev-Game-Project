@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
+import 'package:mobdev_game_project/views/quiz_page/quiz_result.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
 
@@ -26,6 +27,7 @@ class QuestionPageController extends GetxController {
   Question? currentQuestion = null;
   RxInt _questionIndex = 0.obs;
   RxBool _waiting = false.obs;
+  RxList<int> _results = [0, 0, 0, 0].obs;
 
   bool get waiting => _waiting.value;
 
@@ -54,12 +56,14 @@ class QuestionPageController extends GetxController {
 
   setColor(int index, bool timeIsUp) {
     print("index: $index , ans: $_correctAnswer");
-
+    if (timeIsUp) _results[3]++;
     for (int i = 0; i < 4; i++) {
       if (index == i) {
         if (index == _correctAnswer.value) {
+          _results[1]++;
           _colorSwitch[i] = ColorSwitch.CORRECT;
         } else if (!timeIsUp) {
+          _results[2]++;
           _colorSwitch[i] = ColorSwitch.WRONG;
         }
       } else if (i == _correctAnswer.value) {
@@ -70,6 +74,7 @@ class QuestionPageController extends GetxController {
 
   Future<List<Question>?> fetchQuestions(Subject subject) async {
     questions = await Question.getQsFromDBForQuiz(subject);
+    _results[0] = questions!.length;
     print('res = ${questions!.toList().toString()}');
     return questions;
   }
@@ -89,7 +94,12 @@ class QuestionPageController extends GetxController {
 
   void resetForNextQOrQuit() {
     //todo quit function
+    if (_questionIndex == questions!.length - 1) {
+      Get.to(QuizResultPage(_results[0], _results[1], _results[2], _results[3]));
+      return;
+    }
     _questionIndex += 1;
+
     correctAnswer = questions![index].correctAns! - 1;
     _colorSwitch.value = List.filled(4, ColorSwitch.MAIN);
     _waiting.value = false;

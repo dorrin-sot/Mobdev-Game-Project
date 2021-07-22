@@ -4,8 +4,8 @@ import 'package:mobdev_game_project/controllers/question_page_controller.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/views/common/laoding.dart';
-import 'package:mobdev_game_project/views/queez_page/answer_widget.dart';
-import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
+import 'package:mobdev_game_project/views/quiz_page/answer_widget.dart';
+import 'package:mobdev_game_project/views/quiz_page/clock_widget.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class QuestionPage extends StatelessWidget {
@@ -26,7 +26,7 @@ class QuestionPage extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData ||
               (snapshot.data as List<Question>).length == 0) {
-            return LoadingSupportPage("پرسش ها!");
+            return LoadingSupportPage("سوالات!");
           } else {
             return Center(
               child: Obx(() {
