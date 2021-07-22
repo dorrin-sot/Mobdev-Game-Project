@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_widget.dart';
-import 'package:mobdev_game_project/views/subject_page/laoding.dart';
+import 'package:mobdev_game_project/views/common/laoding.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class SubjectPage extends StatelessWidget {
@@ -18,7 +18,7 @@ class SubjectPage extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
                       (snapshot.data as List<Subject>).length == 0) {
-                    return LoadingSupportPage();
+                    return LoadingSupportPage("موضوعات!");
                   } else {
                     return Column(children: [
                       Expanded(
