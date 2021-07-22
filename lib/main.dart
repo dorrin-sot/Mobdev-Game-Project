@@ -11,7 +11,7 @@ import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
-import 'package:mobdev_game_project/views/queez_page/question_page.dart';
+import 'package:mobdev_game_project/views/quiz_page/question_page.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:pedantic/pedantic.dart';
