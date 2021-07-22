@@ -44,6 +44,7 @@ dependencies:
   parse_server_sdk_flutter: ^3.1.0
   async: ^2.7.0
   pedantic: ^1.11.1
+  just_audio: ^0.9.2
 
 dev_dependencies:
 

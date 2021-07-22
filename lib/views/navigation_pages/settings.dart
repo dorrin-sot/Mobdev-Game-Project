@@ -43,16 +43,16 @@ class SettingsPage extends StatelessWidget {
 }
 
 class SettingPageController extends GetxController {
-  final songValue = 80.0.obs;
+  final songValue = 50.0.obs;
   final c = Get.find<AppController>();
 
   SettingPageController() {
-    songValue.value = c.volume * 100;
+    songValue.value = c.musicVolume * 100;
   }
 
   setFirstVolume() {
-    songValue.value = c.volume;
-    print("set volume " + c.volume.toString());
+    songValue.value = c.musicVolume;
+    print("set volume " + c.musicVolume.toString());
   }
 
   void changeSongValue(double value) {
@@ -61,8 +61,8 @@ class SettingPageController extends GetxController {
   }
 
   void saveSongValue(double value) {
-    c.volume = value / 100;
-    c.prefsUpdate();
+    c.musicVolume = value / 100;
+    c.saveMusicVolumeInPrefs();
     c.update();
   }
 }

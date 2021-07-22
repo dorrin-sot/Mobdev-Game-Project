@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
@@ -115,17 +116,21 @@ class MyApp extends StatelessWidget {
 class AppController extends GetxController {
   RxBool isLoggedIn = false.obs;
   User? currentUser;
+  final player = AudioPlayer();
+  double musicVolume=0.1;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     await prefsOnInit();
+    await setMusic();
   }
 
   prefsOnInit() async {
     print('AppController::prefsOnInit');
 
     await getUserFromPrefs(); // get from local
+    await getMusicVolumePrefs();
 
     // update from server in background
     if (currentUser != null)
@@ -153,6 +158,26 @@ class AppController extends GetxController {
     isLoggedIn.value = curUser != null && curUser != 'null';
     update();
   }
+  Future<void> getMusicVolumePrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    double? curVolume = await prefs.getDouble('musicVolume');
+
+    if (curVolume != null) {
+      musicVolume=curVolume;
+    }
+    update();
+  }
+  Future<void> setMusic() async {
+    await player.setAsset('assets/sounds/Main-Theme.mp3');
+    setMusicVolume(musicVolume);
+    print("befor volume: "+musicVolume.toString());
+    player.play();
+    await player.setLoopMode(LoopMode.one);
+  }
+  Future<void> setMusicVolume(double value) async {
+    await player.setVolume(value);
+  }
 
   Future<User?> saveUserInPrefs(ParseUser? user) async {
     print('AppController::saveUserInPrefs');
@@ -161,6 +186,12 @@ class AppController extends GetxController {
     await prefs.setString('curUser', jsonEncode(user));
 
     getUserFromPrefs();
+  }
+  Future<User?> saveMusicVolumeInPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setDouble('musicVolume', musicVolume);
+
   }
 }
 
