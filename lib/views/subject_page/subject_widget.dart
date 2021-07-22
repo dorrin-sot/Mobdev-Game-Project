@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/models/subject.dart';
-import 'package:mobdev_game_project/views/queez_page/question_page.dart';
 
 class SubjectWidget extends StatelessWidget {
   //todo make this page beautiful

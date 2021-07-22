@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1060018844253",
+    "project_id": "mobdev-game-project",
+    "storage_bucket": "mobdev-game-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060018844253:android:852308b991a405136c93b4",
+        "android_client_info": {
+          "package_name": "com.project.mobdev.mobdev_game_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060018844253-9fas4qnqlatt0lt3ts142m6u72oe7638.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClLSXVoP2k7ury5iI1WUvT1IO3v-TndkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060018844253-9fas4qnqlatt0lt3ts142m6u72oe7638.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

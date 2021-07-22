@@ -112,7 +112,7 @@ class HeartController extends GetxController {
         Schedule.parse("*/10 * * * * *"),
         () => update());
     Future.delayed(
-        DateTime.now().difference(currentUser.heartsLastUpdateTime
+        DateTime.now().difference(currentUser.heartsLastUpdateTime!
             .add(Duration(minutes: User.HEART_ADD_INTERVAL))),
         () => Cron().schedule(
             Schedule.parse(
@@ -128,7 +128,7 @@ class MoneyIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     User currentUser = Get.find<AppController>().currentUser!;
 
-    final c = MoneyController(currentUser.money);
+    final c = MoneyController(currentUser.money!);
     Get.put(c);
 
     return SizedBox(
@@ -179,7 +179,7 @@ class PointsIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     User currentUser = Get.find<AppController>().currentUser!;
 
-    final c = PointController(currentUser.points);
+    final c = PointController(currentUser.points!);
     Get.put(c);
 
     return SizedBox(

@@ -1,13 +1,15 @@
 import 'dart:core';
 
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class User extends ParseUser {
-  static const String _keyTableName = 'User';
+class User extends ParseUser implements ParseCloneable {
+  static const String _keyTableName = '_User';
 
   static const String keyUsername = 'username';
   static const String keyPassword = 'password';
@@ -21,57 +23,102 @@ class User extends ParseUser {
   static const String keyMoney = 'money';
   static const String keyPoints = 'points';
 
+  int? correctQCount;
+  int? incorrectQCount;
+  int? timeoutQCount;
+  int? hearts;
+  int? money;
+  int? points;
+  DateTime? heartsLastUpdateTime;
+
+  GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+
   static const HEARTS_MAX = 20;
   static final HEART_ADD_INTERVAL = 15; // in minutes
 
-  User(String username, String password, {String? emailAddress})
-      : super(username, password, emailAddress);
+  User(String? username, String? password,
+      {String? emailAddress, String? sessionToken})
+      : super(username, password, emailAddress, sessionToken: sessionToken);
 
-  factory User.forParse(String username, String password,
+  factory User.forParseRegister(String username, String password,
           {String? emailAddress,
           int hearts = HEARTS_MAX,
+          int correctQCount = 0,
+          int incorrectQCount = 0,
+          int timeoutQCount = 0,
           int money = 100,
           int points = 5,
           DateTime? heartsLastUpdateTime}) =>
       User(username, password, emailAddress: emailAddress)
-        ..hearts = hearts
-        ..money = money
-        ..points = points
-        ..heartsLastUpdateTime = heartsLastUpdateTime ?? DateTime.now();
+        ..set(keyCorrectQCount, correctQCount)
+        ..set(keyIncorrectQCount, incorrectQCount)
+        ..set(keyTimeoutQCount, timeoutQCount)
+        ..set(keyHearts, hearts)
+        ..set(keyMoney, money)
+        ..set(keyPoints, points)
+        ..set(keyHeartsLastUpdateTime, heartsLastUpdateTime ?? DateTime.now());
+
+  factory User.fromJsonn(Map<String, dynamic> json) =>
+      User(json[keyUsername], '',
+          emailAddress: json[keyEmail], sessionToken: json['sessionToken'])
+        ..correctQCount = json[keyCorrectQCount]
+        ..incorrectQCount = json[keyIncorrectQCount]
+        ..timeoutQCount = json[keyTimeoutQCount]
+        ..hearts = json[keyHearts]
+        ..money = json[keyMoney]
+        ..points = json[keyPoints]
+        ..heartsLastUpdateTime = DateTime.parse(
+            (json[keyHeartsLastUpdateTime] as Map<String, dynamic>)['iso'])
+        ..objectId = json['objectId'];
 
   @override
   Future<ParseResponse> login({bool doNotSendInstallationID = false}) async {
     return await super
         .login(doNotSendInstallationID: doNotSendInstallationID)
-        .then((response) {
+        .then((response) async {
       if (response.success) {
         final c = Get.find<AppController>();
         c.isLoggedIn.value = true;
-        c.currentUser = this;
-        c.prefsUpdate();
+        await c.saveUserInPrefs(this);
         c.update();
       }
       return response;
     });
   }
 
-  loginGoogle({required String email}) async {
-    // fixme fix after ui done
-    // final GoogleSignIn _googleSignIn = GoogleSignIn(
-    //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
-    // final account = (await _googleSignIn.signIn())!;
-    // final authentication = await account.authentication;
-    //
-    // await ParseUser.loginWith(
-    //         'google',
-    //         google(_googleSignIn.currentUser!.id, authentication.accessToken!,
-    //             authentication.idToken!))
-    //     .then((response) {
-    //   final c = Get.find<AppController>();
-    //   c.isLoggedIn = true;
-    //   c.currentUser = this;
-    //   c.update();
-    // });
+  static Future<bool> loginGoogle(
+      {String? username, String? password, String? email}) async {
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    final account = await _googleSignIn.signIn();
+    if (account == null) return false;
+    final authentication = await account.authentication;
+
+    print('display name: ${account.displayName!}');
+    print('email: ${account.email}');
+    return ParseUser.loginWith(
+      'google',
+      google(_googleSignIn.currentUser!.id, authentication.accessToken!,
+          authentication.idToken!),
+      username: 'User${(await count()).toInt()}',
+      password: '',
+    ).then((response) async {
+      if (!response.success)
+        await logoutGoogle();
+      else {
+        final c = Get.find<AppController>();
+        c.isLoggedIn.value = true;
+        await c.saveUserInPrefs(response.results as ParseUser);
+        c.update();
+      }
+      return response.success;
+    });
   }
 
   @override
@@ -82,17 +129,14 @@ class User extends ParseUser {
       if (response.success) {
         final c = Get.find<AppController>();
         c.isLoggedIn.value = false;
-        c.currentUser = null;
-        c.prefsUpdate();
+        c.saveUserInPrefs(null);
         c.update();
       }
       return response;
     });
   }
 
-  logoutGoogle() async {
-    // fixme add after ui done
-  }
+  static logoutGoogle() async => GoogleSignIn().disconnect();
 
   @override
   Future<ParseResponse> signUp(
@@ -110,8 +154,11 @@ class User extends ParseUser {
     });
   }
 
-  signUpGoogle() async {
-    // fixme add after ui done
+  static Future<bool> signUpGoogle() async {
+    return loginGoogle(
+      username: 'User${count()}',
+      password: '',
+    );
   }
 
   static Future<bool> userExists(String username) async {
@@ -121,34 +168,12 @@ class User extends ParseUser {
     return response.isNotEmpty;
   }
 
-  int get hearts => get<int>(keyHearts)!;
-
-  set hearts(int value) => set<int>(keyHearts, value);
-
-  int get money => get<int>(keyMoney)!;
-
-  set money(int value) => set<int>(keyMoney, value);
-
-  int get points => get<int>(keyPoints)!;
-
-  set points(int value) => set<int>(keyPoints, value);
-
-  ParseRelation<Question> get allQuestions => getRelation(keyAllQuestions);
-
-  set allQuestions(ParseRelation<Question> value) =>
-      set<ParseRelation<Question>>(keyAllQuestions, value);
-
   addQuestion(Question question) => getRelation(keyAllQuestions).add(question);
-
-  DateTime get heartsLastUpdateTime => get<DateTime>(keyHeartsLastUpdateTime)!;
-
-  set heartsLastUpdateTime(DateTime value) =>
-      set<DateTime>(keyHeartsLastUpdateTime, value);
 
   double get timeDoneFraction {
     if (hearts == HEARTS_MAX) return 1;
     final res =
-        DateTime.now().difference(heartsLastUpdateTime).inSeconds.toDouble() /
+        DateTime.now().difference(heartsLastUpdateTime!).inSeconds.toDouble() /
             (HEART_ADD_INTERVAL * 60).toDouble();
     return res;
   }
@@ -156,11 +181,11 @@ class User extends ParseUser {
   double get minutesTillNext => (1 - timeDoneFraction) * HEART_ADD_INTERVAL;
 
   updateHearts() async {
-    if (hearts >= HEARTS_MAX) return;
+    if (hearts! >= HEARTS_MAX) return;
 
     final dHeart = timeDoneFraction.floor();
     setIncrement(keyHearts, dHeart);
-    heartsLastUpdateTime = heartsLastUpdateTime
+    heartsLastUpdateTime = heartsLastUpdateTime!
         .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
         .at0secs();
 
@@ -168,7 +193,7 @@ class User extends ParseUser {
   }
 
   useHeart() async {
-    assert(hearts > 0);
+    assert(hearts! > 0);
 
     if (hearts == HEARTS_MAX) {
       heartsLastUpdateTime = DateTime.now().at0secs();
@@ -177,6 +202,19 @@ class User extends ParseUser {
     setDecrement(keyHearts, 1);
     await save();
     Get.find<HeartController>().update();
+  }
+
+  static Future<int> count() async {
+    return (QueryBuilder<ParseObject>(ParseUser.forQuery())
+          ..keysToReturn(['objectId']))
+        .query()
+        .then((response) => response.results!.length);
+  }
+
+  @override
+  String toString() {
+    // return jsonEncode(this);
+    return '${super.toString()}    User{correctQCount: $correctQCount, incorrectQCount: $incorrectQCount, timeoutQCount: $timeoutQCount, hearts: $hearts, money: $money, points: $points, heartsLastUpdateTime: $heartsLastUpdateTime}';
   }
 }
 

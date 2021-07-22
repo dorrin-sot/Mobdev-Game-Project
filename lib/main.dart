@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -7,18 +11,21 @@ import 'package:mobdev_game_project/views/navigation_pages/accounts.dart';
 import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 import 'package:mobdev_game_project/views/navigation_pages/settings.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
-import 'package:mobdev_game_project/views/queez_page/question_page.dart';
+import 'package:mobdev_game_project/views/quiz_page/question_page.dart';
 import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/question.dart';
 import 'models/subject.dart';
 import 'models/user.dart';
-import 'package:just_audio/just_audio.dart';
 
 Future main() async {
+ // await initServices();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await Firebase.initializeApp();
 
   final keyApplicationId = dotenv.env['keyApplicationId']!;
   final keyParseServerUrl = dotenv.env['keyParseServerUrl']!;
@@ -32,13 +39,25 @@ Future main() async {
       },
       parseUserConstructor: (username, password, emailAddress,
               {client, debug, sessionToken}) =>
-          User(username!, password!),
+          User(username, password),
       debug: true);
 
   final c = AppController();
   Get.put(c);
   runApp(MyApp());
 }
+
+//initServices() async {
+//  await Get.putAsync(()=>SettingsService().init());
+//}
+//
+//class SettingsService extends GetxService {
+//  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
+//
+//  init() async {
+//    audioPlayer.open(Audio('assets/sounds/Main-Theme.mp3'));
+//  }
+//}
 
 class MyApp extends StatelessWidget {
   //const MyApp({Key? key}) : super(key: key);
@@ -96,70 +115,55 @@ class MyApp extends StatelessWidget {
 class AppController extends GetxController {
   RxBool isLoggedIn = false.obs;
   User? currentUser;
-  final player = AudioPlayer();
-  double volume = 0.1;
-  var duration;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     await prefsOnInit();
-    await setMusic();
   }
 
   prefsOnInit() async {
     print('AppController::prefsOnInit');
+
+    await getUserFromPrefs(); // get from local
+
+    // update from server in background
+    if (currentUser != null)
+      unawaited(Future.sync(() {
+        return currentUser!.getUpdatedUser(debug: true).then((response) {
+          if (!response.success) return;
+          print('updated to ${response.result}');
+          saveUserInPrefs(response.result);
+        });
+      }));
+
+    update();
+  }
+
+  Future<void> getUserFromPrefs() async {
+    print('AppController::getUserFromPrefs');
     final prefs = await SharedPreferences.getInstance();
 
-    bool? isLoggedInPref = prefs.getBool('isLoggedIn');
-    double? musicVolume = prefs.getDouble('musicVolume');
-    if(musicVolume!=null)
-      volume=musicVolume;
-    print("VVVVVVVV:    "+volume.toString());
-    if (isLoggedInPref == null) {
-      prefs.setBool('isLoggedIn', false);
-    }
+    String? curUser = await prefs.getString('curUser');
 
-    prefs.reload();
-    isLoggedInPref = prefs.getBool('isLoggedIn');
-    String? curUserUNPref = prefs.getString('curUserUN');
-    String? curUserPWPref = prefs.getString('curUserPW');
-
-    if (isLoggedInPref!) {
-      User(
-        curUserUNPref!,
-        curUserPWPref!,
-      ).login();
+    if (curUser != null && curUser != 'null') {
+      currentUser = User.fromJsonn(jsonDecode(curUser));
+      print('curUser: $currentUser');
     }
+    isLoggedIn.value = curUser != null && curUser != 'null';
+    update();
   }
 
-  prefsUpdate() async {
-    print('AppController::prefsUpdate');
+  Future<User?> saveUserInPrefs(ParseUser? user) async {
+    print('AppController::saveUserInPrefs');
     final prefs = await SharedPreferences.getInstance();
 
-    prefs.setBool('isLoggedIn', isLoggedIn.isTrue);
-    prefs.setDouble('musicVolume', volume);
-    print("VOLUME:________: "+volume.toString());
+    await prefs.setString('curUser', jsonEncode(user));
 
-    if (isLoggedIn.isTrue) {
-      prefs.setString('curUserUN', currentUser!.username!);
-      prefs.setString('curUserPW', currentUser!.password!);
-    }
+    getUserFromPrefs();
   }
+}
 
-  setMusic() async {
-    duration = await player.setAsset('assets/sounds/Main-Theme.mp3');
-    await player.setVolume(volume);
-    print("vo;oume after  "+volume.toString());
-    player.play();
-    await player.setLoopMode(LoopMode.one);
-  }
-
-  setMusicVolume(double value) async {
-    await player.setVolume(value);
-    if (value == 0)
-      player.pause();
-    else
-      player.play();
-  }
+extension ObjectMapGet on Object {
+  Map<String, dynamic> getJsonMap() => jsonDecode(jsonEncode(this));
 }

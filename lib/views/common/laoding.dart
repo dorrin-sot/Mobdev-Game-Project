@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoadingSupportPage extends StatelessWidget {
-  const LoadingSupportPage({Key? key}) : super(key: key);
-  //todo make this page beautiful
+  final String whatToShow;
+
+  LoadingSupportPage(this.whatToShow); //todo make this page beautiful
   //todo make an animation here
-  //todo make an appbar to return if fetching data takes so long
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +14,12 @@ class LoadingSupportPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "در حال چکش کاری موضوعات!",
+            "در حال چکس کاری" + whatToShow,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           CircularProgressIndicator()
         ],
       ),

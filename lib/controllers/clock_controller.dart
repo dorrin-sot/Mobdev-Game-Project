@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
-import 'package:mobdev_game_project/views/queez_page/clock_widget.dart';
+import 'package:mobdev_game_project/views/quiz_page/clock_widget.dart';
 
 class ClockController extends GetxController {
   Rx<Timer> _timer = Timer.periodic(const Duration(seconds: 1), (timer) {}).obs;
