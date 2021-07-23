@@ -41,8 +41,7 @@ Future main() async {
           User(username, password),
       debug: true);
 
-  final c = AppController();
-  Get.put(c);
+  Get.put(AppController());
   runApp(MyApp());
 }
 
@@ -90,7 +89,8 @@ class MyApp extends StatelessWidget {
             name: '/question_page',
             page: () => QuestionPage(),
             transition: Transition.rightToLeft),
-        GetPage(name: '/quiz-res',
+        GetPage(
+            name: '/quiz-res',
             page: () => QuizResultPage(),
             transition: Transition.rightToLeft),
       ],
@@ -103,7 +103,7 @@ class AppController extends GetxController {
   RxBool isLoggedIn = false.obs;
   User? currentUser;
   final player = AudioPlayer();
-  double musicVolume=0.1;
+  double musicVolume = 0.1;
 
   @override
   Future<void> onInit() async {
@@ -116,7 +116,6 @@ class AppController extends GetxController {
     print('AppController::prefsOnInit');
 
     await getUserFromPrefs(); // get from local
-    await getMusicVolumePrefs();
 
     // update from server in background
     if (currentUser != null)
@@ -127,6 +126,48 @@ class AppController extends GetxController {
           saveUserInPrefs(response.result);
         });
       }));
+
+    await getMusicVolumePrefs();
+
+    update();
+  }
+
+  Future<void> getMusicVolumePrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    double? curVolume = await prefs.getDouble('musicVolume');
+
+    if (curVolume != null) {
+      musicVolume = curVolume;
+    }
+    update();
+  }
+
+  Future<void> setMusic() async {
+    await player.setAsset('assets/sounds/Main-Theme.mp3');
+    setMusicVolume(musicVolume);
+    print("befor volume: " + musicVolume.toString());
+    player.play();
+    await player.setLoopMode(LoopMode.one);
+  }
+
+  Future<void> setMusicVolume(double value) async {
+    await player.setVolume(value);
+  }
+
+  Future<User?> saveMusicVolumeInPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setDouble('musicVolume', musicVolume);
+  }
+
+  Future<User?> saveUserInPrefs(ParseUser? user) async {
+    print('AppController::saveUserInPrefs');
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('curUser', jsonEncode(user));
+
+    await getUserFromPrefs();
 
     update();
   }
@@ -143,41 +184,6 @@ class AppController extends GetxController {
     }
     isLoggedIn.value = curUser != null && curUser != 'null';
     update();
-  }
-  Future<void> getMusicVolumePrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    double? curVolume = await prefs.getDouble('musicVolume');
-
-    if (curVolume != null) {
-      musicVolume=curVolume;
-    }
-    update();
-  }
-  Future<void> setMusic() async {
-    await player.setAsset('assets/sounds/Main-Theme.mp3');
-    setMusicVolume(musicVolume);
-    print("befor volume: "+musicVolume.toString());
-    player.play();
-    await player.setLoopMode(LoopMode.one);
-  }
-  Future<void> setMusicVolume(double value) async {
-    await player.setVolume(value);
-  }
-
-  Future<User?> saveUserInPrefs(ParseUser? user) async {
-    print('AppController::saveUserInPrefs');
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('curUser', jsonEncode(user));
-
-    getUserFromPrefs();
-  }
-  Future<User?> saveMusicVolumeInPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setDouble('musicVolume', musicVolume);
-
   }
 }
 

@@ -5,7 +5,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class User extends ParseUser implements ParseCloneable {
@@ -74,6 +73,12 @@ class User extends ParseUser implements ParseCloneable {
 
   @override
   Future<ParseResponse> login({bool doNotSendInstallationID = false}) async {
+    int? errorCode;
+    if (username!.isEmpty) errorCode = 200;
+    if (password!.isEmpty) errorCode = 201;
+    if (errorCode != null)
+      return ParseResponse(error: ParseError(code: errorCode));
+
     return await super
         .login(doNotSendInstallationID: doNotSendInstallationID)
         .then((response) async {
@@ -114,8 +119,7 @@ class User extends ParseUser implements ParseCloneable {
       else {
         final c = Get.find<AppController>();
         c.isLoggedIn.value = true;
-        await c.saveUserInPrefs(response.results as ParseUser);
-        c.update();
+        c.saveUserInPrefs(response.result);
       }
       return response.success;
     });
@@ -130,7 +134,6 @@ class User extends ParseUser implements ParseCloneable {
         final c = Get.find<AppController>();
         c.isLoggedIn.value = false;
         c.saveUserInPrefs(null);
-        c.update();
       }
       return response;
     });
@@ -142,6 +145,13 @@ class User extends ParseUser implements ParseCloneable {
   Future<ParseResponse> signUp(
       {bool allowWithoutEmail = false,
       bool doNotSendInstallationID = false}) async {
+    int? errorCode;
+    if (username!.isEmpty) errorCode = 200;
+    if (password!.isEmpty) errorCode = 201;
+    if (!allowWithoutEmail && emailAddress!.isEmpty) errorCode = 204;
+    if (errorCode != null)
+      return ParseResponse(error: ParseError(code: errorCode));
+
     return await super
         .signUp(
             allowWithoutEmail: allowWithoutEmail,
@@ -207,8 +217,8 @@ class User extends ParseUser implements ParseCloneable {
   static Future<int> count() async {
     return (QueryBuilder<ParseObject>(ParseUser.forQuery())
           ..keysToReturn(['objectId']))
-        .query()
-        .then((response) => response.results!.length);
+        .count()
+        .then((response) => response.result);
   }
 
   @override

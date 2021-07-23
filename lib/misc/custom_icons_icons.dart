@@ -29,6 +29,5 @@ class CustomIcons {
   static const _kFontFam = 'CustomIcons';
   static const String? _kFontPkg = null;
 
-  static const IconData stars = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData coins = IconData(0xf51e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -30,15 +30,6 @@ class CustomBottomNavBar extends CurvedNavigationBar {
         );
       },
     );
-    // return super(
-    //   key: navbarStateKey,
-    //   index: c.index.value,
-    //   items: NavBarItem.allItems.map((e) => e.iconWidget!).toList(),
-    //   onTap: (index) {
-    //     c.setCurrent(NavBarController.getNavBarItem(index).pageDest);
-    //     c.index.value = index;
-    //   },
-    // );
   }
 }
 
