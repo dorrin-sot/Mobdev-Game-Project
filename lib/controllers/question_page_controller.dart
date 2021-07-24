@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/controllers/clock_controller.dart';
+import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
+import 'package:pedantic/pedantic.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
 
@@ -75,6 +77,10 @@ class QuestionPageController extends GetxController {
     questions = await Question.getQsFromDBForQuiz(subject);
     _results[0] = questions!.length;
     print('res = ${questions!}');
+    if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
+    else {
+      // todo go back or show a dialog for if there are no more questions left in DB
+    }
     return questions;
   }
 
@@ -94,11 +100,18 @@ class QuestionPageController extends GetxController {
   void resetForNextQOrQuit() {
     //todo quit function
     if (_questionIndex == questions!.length - 1) {
+      int correct = _results[1], wrong = _results[2], empty = _results[3];
+      unawaited(Question.submitResults(
+              quizQs: questions!,
+              correctCount: correct,
+              incorrectCount: wrong,
+              timeoutCount: empty)
+          .then((response) => print('results saved')));
       Get.toNamed('/quiz-res', arguments: {
         'num': _results[0],
-        'correct': _results[1],
-        'wrong': _results[2],
-        'empty': _results[3]
+        'correct': correct,
+        'wrong': wrong,
+        'empty': empty
       });
       return;
     }

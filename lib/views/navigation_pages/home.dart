@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,8 +10,7 @@ class HomePage extends StatelessWidget {
         child: Container(
           child: ElevatedButton(
             child: Text("کلیک بنمای"),
-            onPressed: () =>
-                Get.find<NavBarController>().setCurrent('/subjects'),
+            onPressed: () => Get.toNamed('/subjects'),
           ),
         ),
       );

@@ -42,8 +42,8 @@ class Question extends ParseObject implements ParseCloneable {
           keySubject,
           QueryBuilder<ParseObject>(Subject())
             ..whereEqualTo(Subject.keyName, subject.name))
-      ..whereDoesNotMatchQuery(
-          'objectId',
+      ..whereDoesNotMatchKeyInQuery(
+          'objectId', 'objectId',
           QueryBuilder<ParseObject>(Question())
             ..whereRelatedTo(User.keyAllQuestions, '_User', curUser.objectId!))
       ..setLimit(numberOfQs);
@@ -53,33 +53,32 @@ class Question extends ParseObject implements ParseCloneable {
       for (ParseObject parseQ in response.results!)
         allQList.add(Question.fromJson(parseQ.getJsonMap(), subject));
 
+      print('question query: $allQList');
       return allQList;
     });
   }
 
-  // if answer is null means user ran out of time otherwise check if answer was correct
-  // returns if answer was correct or not as a bool (returns null if out of time)
-  bool? answerQ({int? answer}) {
-    final c = Get.find<AppController>();
-    final curUser = c.currentUser!;
+  static Future<ParseResponse> submitResults(
+      {required List<Question> quizQs,
+      required int correctCount,
+      required int incorrectCount,
+      required int timeoutCount}) async {
+    final currentUser = Get.find<AppController>().currentUser!;
+    print('submit result user : $currentUser');
 
-    bool? result;
-    if (answer == null) {
-      curUser.setIncrement(User.keyTimeoutQCount, 1);
-      result = null;
-    } else if (this.correctAns == answer) {
-      curUser.setIncrement(User.keyCorrectQCount, 1);
-      curUser.setIncrement(User.keyPoints,
-          1); // add a point if answered correct fixme: maybe give more than one point
-      result = true;
-    } else {
-      curUser.setIncrement(User.keyIncorrectQCount, 1);
-      result = false;
-    }
+    for (var q in quizQs) currentUser.addQuestion(q);
 
-    curUser.addQuestion(this);
-    curUser.save();
-    return result;
+    int allQCount = correctCount + incorrectCount + timeoutCount;
+    int cmpPoint = correctCount + incorrectCount * -2 + timeoutCount * -1;
+
+    return await (currentUser
+          ..setIncrement(User.keyCorrectQCount, correctCount)
+          ..setIncrement(User.keyIncorrectQCount, incorrectCount)
+          ..setIncrement(User.keyTimeoutQCount, timeoutCount)
+          ..setIncrement(
+              User.keyPoints, correctCount * User.PTS_WIN_PER_CORRECT)
+          ..setIncrement(User.keyMoney, cmpPoint / allQCount > 0.5 ? 1 : 0))
+        .save();
   }
 
   @override

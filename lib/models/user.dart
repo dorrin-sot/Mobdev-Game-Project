@@ -22,6 +22,7 @@ class User extends ParseUser implements ParseCloneable {
   static const String keyMoney = 'money';
   static const String keyPoints = 'points';
 
+  List<String>? allQuestions;
   int? correctQCount;
   int? incorrectQCount;
   int? timeoutQCount;
@@ -29,6 +30,8 @@ class User extends ParseUser implements ParseCloneable {
   int? money;
   int? points;
   DateTime? heartsLastUpdateTime;
+
+  static const int PTS_WIN_PER_CORRECT = 1;
 
   GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
@@ -41,7 +44,7 @@ class User extends ParseUser implements ParseCloneable {
       : super(username, password, emailAddress, sessionToken: sessionToken);
 
   factory User.forParseRegister(String username, String password,
-          {String? emailAddress,
+          {String? emailAddress, String? sessionToken,
           int hearts = HEARTS_MAX,
           int correctQCount = 0,
           int incorrectQCount = 0,
@@ -59,8 +62,9 @@ class User extends ParseUser implements ParseCloneable {
         ..set(keyHeartsLastUpdateTime, heartsLastUpdateTime ?? DateTime.now());
 
   factory User.fromJsonn(Map<String, dynamic> json) =>
-      User(json[keyUsername], '',
-          emailAddress: json[keyEmail], sessionToken: json['sessionToken'])
+      User(json[keyUsername], json[keyPassword],
+        emailAddress: json[keyEmail], sessionToken: json[keyParamSessionToken])
+        ..allQuestions = json[keyAllQuestions]['objects']
         ..correctQCount = json[keyCorrectQCount]
         ..incorrectQCount = json[keyIncorrectQCount]
         ..timeoutQCount = json[keyTimeoutQCount]
@@ -119,7 +123,7 @@ class User extends ParseUser implements ParseCloneable {
       else {
         final c = Get.find<AppController>();
         c.isLoggedIn.value = true;
-        c.saveUserInPrefs(response.result);
+        await c.saveUserInPrefs(response.result);
       }
       return response.success;
     });
@@ -178,7 +182,7 @@ class User extends ParseUser implements ParseCloneable {
     return response.isNotEmpty;
   }
 
-  addQuestion(Question question) => getRelation(keyAllQuestions).add(question);
+  addQuestion(Question question) => addRelation(keyAllQuestions, [question]);
 
   double get timeDoneFraction {
     if (hearts == HEARTS_MAX) return 1;
@@ -191,6 +195,8 @@ class User extends ParseUser implements ParseCloneable {
   double get minutesTillNext => (1 - timeDoneFraction) * HEART_ADD_INTERVAL;
 
   updateHearts() async {
+    update();
+
     if (hearts! >= HEARTS_MAX) return;
 
     final dHeart = timeDoneFraction.floor();
@@ -199,7 +205,7 @@ class User extends ParseUser implements ParseCloneable {
         .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
         .at0secs();
 
-    save().then((value) => Get.find<HeartController>().update());
+    save();
   }
 
   useHeart() async {
@@ -211,7 +217,10 @@ class User extends ParseUser implements ParseCloneable {
 
     setDecrement(keyHearts, 1);
     await save();
-    Get.find<HeartController>().update();
+    await update();
+    Get.find<HeartController>()
+      ..hearts.value = hearts
+      ..timeRemaining.value = Get.find<HeartController>().getRemainingTime()!;
   }
 
   static Future<int> count() async {
@@ -223,8 +232,7 @@ class User extends ParseUser implements ParseCloneable {
 
   @override
   String toString() {
-    // return jsonEncode(this);
-    return '${super.toString()}    User{correctQCount: $correctQCount, incorrectQCount: $incorrectQCount, timeoutQCount: $timeoutQCount, hearts: $hearts, money: $money, points: $points, heartsLastUpdateTime: $heartsLastUpdateTime}';
+    return '${super.toString()}  User{allQuestions: $allQuestions, correctQCount: $correctQCount, incorrectQCount: $incorrectQCount, timeoutQCount: $timeoutQCount, hearts: $hearts, money: $money, points: $points, heartsLastUpdateTime: $heartsLastUpdateTime}';
   }
 }
 

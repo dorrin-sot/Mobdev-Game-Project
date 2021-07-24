@@ -12,8 +12,8 @@ import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart'
 import 'package:mobdev_game_project/views/no_network_page.dart';
 import 'package:mobdev_game_project/views/quiz_page/question_page.dart';
 import 'package:mobdev_game_project/views/quiz_page/quiz_result.dart';
+import 'package:mobdev_game_project/views/subject_page/subject_page.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/question.dart';
@@ -21,7 +21,7 @@ import 'models/subject.dart';
 import 'models/user.dart';
 
 Future main() async {
- // await initServices();
+  // await initServices();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
@@ -31,16 +31,20 @@ Future main() async {
   final keyParseServerUrl = dotenv.env['keyParseServerUrl']!;
   final keyClientKey = dotenv.env['keyParseClientKey']!;
 
-  await Parse().initialize(keyApplicationId, keyParseServerUrl,
-      clientKey: keyClientKey,
-      registeredSubClassMap: <String, ParseObject Function()>{
-        'Question': () => Question(),
-        'Subject': () => Subject()
-      },
-      parseUserConstructor: (username, password, emailAddress,
-              {client, debug, sessionToken}) =>
-          User(username, password),
-      debug: true);
+  await Parse().initialize(
+    keyApplicationId,
+    keyParseServerUrl,
+    clientKey: keyClientKey,
+    registeredSubClassMap: <String, ParseObject Function()>{
+      'Question': () => Question(),
+      'Subject': () => Subject()
+    },
+    parseUserConstructor: (username, password, emailAddress,
+            {client, debug, sessionToken}) =>
+        User(username, password),
+    debug: true,
+    coreStore: await CoreStoreSharedPrefsImp.getInstance(),
+  );
 
   Get.put(AppController());
   runApp(MyApp());
@@ -70,8 +74,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
             name: '/main-pages',
-            page: () =>
-                Scaffold(
+            page: () => Scaffold(
                   appBar: CustomAppbar.build(),
                   bottomNavigationBar: CustomBottomNavBar.build(),
                   backgroundColor: Colors.white,
@@ -88,6 +91,10 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/no-network',
             page: () => NoNetworkPage(),
+            transition: Transition.rightToLeft),
+        GetPage(
+            name: '/subjects',
+            page: () => SubjectPage(),
             transition: Transition.rightToLeft),
         GetPage(
             name: '/question_page',
@@ -118,20 +125,66 @@ class AppController extends GetxController {
 
   prefsOnInit() async {
     print('AppController::prefsOnInit');
-
-    await getUserFromPrefs(); // get from local
-
-    // update from server in background
-    if (currentUser != null)
-      unawaited(Future.sync(() {
-        return currentUser!.getUpdatedUser(debug: true).then((response) {
-          if (!response.success) return;
-          print('updated to ${response.result}');
-          saveUserInPrefs(response.result);
-        });
-      }));
-
+    await getUserFromPrefs();
     await getMusicVolumePrefs();
+    update();
+  }
+
+  Future<void> saveUserInPrefs(ParseUser? user) async {
+    print('AppController::saveUserInPrefs');
+    // final prefs = await SharedPreferences.getInstance();
+    if (user != null) {
+      // String sessionId = user.getJsonMap()[keyParamSessionToken];
+      // ParseCoreData().setSessionId(sessionId);
+      //
+      // unawaited(prefs.setString(keyParamSessionToken, sessionId));
+
+      currentUser = User.fromJsonn(user.getJsonMap());
+      isLoggedIn.value = true;
+    } else {
+      // unawaited(prefs.remove(keyParamSessionToken));
+      // ParseCoreData().sessionId = null;
+
+      currentUser = null;
+      isLoggedIn.value = false;
+    }
+    update();
+  }
+
+  Future<void> getUserFromPrefs() async {
+    print('AppController::getUserFromPrefs');
+
+    // final sessionId = await (await SharedPreferences.getInstance())
+    //     .getString(keyParamSessionToken);
+    //
+    // if (sessionId == null || sessionId == 'null') return;
+
+    // ParseCoreData().setSessionId(sessionId);
+
+    await ParseUser.currentUser()
+        .then((response) => (response as ParseUser).getUpdatedUser())
+        .then((response) {
+      currentUser =
+          User.fromJsonn(((response).result as ParseUser).getJsonMap());
+      isLoggedIn.value = true;
+      print('currentUser: $currentUser');
+    });
+    //     ;.then((result) {
+    //   if (result == null) return;
+    //
+    //   result.getUpdatedUser().then((response) {
+    //     print('getUserFromPrefs curUser: ${response.result.getJsonMap()}');
+    //
+    //     return (response.result as ParseUser).getJsonMap();
+    //   });
+    //
+    //   print('result: $result');
+    //   currentUser = User.fromJsonn((result as ParseUser).getJsonMap());
+    //   isLoggedIn.value = true;
+    //
+    // });
+    // currentUser = await User.fromJsonn(await ParseUser.currentUser()
+    //     .then((result) => (result as ParseUser).getJsonMap()));
 
     update();
   }
@@ -159,35 +212,10 @@ class AppController extends GetxController {
     await player.setVolume(value);
   }
 
-  Future<User?> saveMusicVolumeInPrefs() async {
+  Future<void> saveMusicVolumeInPrefs() async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setDouble('musicVolume', musicVolume);
-  }
-
-  Future<User?> saveUserInPrefs(ParseUser? user) async {
-    print('AppController::saveUserInPrefs');
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('curUser', jsonEncode(user));
-
-    await getUserFromPrefs();
-
-    update();
-  }
-
-  Future<void> getUserFromPrefs() async {
-    print('AppController::getUserFromPrefs');
-    final prefs = await SharedPreferences.getInstance();
-
-    String? curUser = await prefs.getString('curUser');
-
-    if (curUser != null && curUser != 'null') {
-      currentUser = User.fromJsonn(jsonDecode(curUser));
-      print('curUser: $currentUser');
-    }
-    isLoggedIn.value = curUser != null && curUser != 'null';
-    update();
   }
 }
 

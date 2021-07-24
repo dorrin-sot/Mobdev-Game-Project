@@ -51,9 +51,6 @@ class NavBarController extends GetxController {
           case '/account/register':
             body = AccountsPageRegister();
             break;
-          case '/subjects':
-            body = SubjectPage();
-            break;
           default:
             body = null; // shouldnt happen
         }
