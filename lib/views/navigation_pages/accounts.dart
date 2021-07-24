@@ -71,46 +71,78 @@ class AccountsPageProfile extends StatelessWidget {
                 )),
             ButtonBar(
               alignment: MainAxisAlignment.center,
+              buttonPadding:
+                  EdgeInsets.symmetric(vertical: 20, horizontal: Get.width / 4),
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 20, horizontal: Get.width / 4),
-                  child: TextButton(
-                    child: Text(
-                      'حذف اکانت',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    onPressed: () {
-                      Get.defaultDialog(
-                        title: 'خطر!',
-                        titleStyle: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                        content: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 30),
-                          child: Text(
-                            'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
-                            style: TextStyle(fontSize: 15),
-                            textAlign: TextAlign.center,
-                            textDirection: TextDirection.rtl,
-                          ),
-                        ),
-                        textConfirm: 'حذف',
-                        onConfirm: () async {
-                          final currentUser =
-                              Get.find<AppController>().currentUser!;
-                          await currentUser.delete();
-                          await currentUser.logout();
-                          Get.back();
-                          Get.find<NavBarController>().setCurrent('/account/login');
-                        },
-                        textCancel: 'بیخیال',
-                      );
-                    },
+                TextButton(
+                  child: Text(
+                    'حذف اکانت',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15),
                   ),
+                  onPressed: () {
+                    Get.defaultDialog(
+                      title: 'خطر!',
+                      titleStyle: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                      content: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 30),
+                        child: Text(
+                          'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
+                          style: TextStyle(fontSize: 15),
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                      textConfirm: 'حذف',
+                      onConfirm: () async {
+                        final currentUser =
+                            Get.find<AppController>().currentUser!;
+                        await currentUser.delete();
+                        await currentUser.logout();
+                        Get.back();
+                        Get.find<NavBarController>()
+                            .setCurrent('/account/login');
+                      },
+                      textCancel: 'بیخیال',
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(
+                    'لاگ اوت',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async {
+                    Get.defaultDialog(
+                      title: '',
+                      titleStyle: TextStyle(fontSize: .01),
+                      content: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 30),
+                        child: Text(
+                          'مطمینی میخوای لاگ اوت کنی؟',
+                          style: TextStyle(fontSize: 15),
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                      textConfirm: 'لاگ اوت',
+                      onConfirm: () async {
+                        final currentUser =
+                            Get.find<AppController>().currentUser!;
+                        await currentUser.logout();
+                        Get.back();
+                        Get.find<NavBarController>()
+                            .setCurrent('/account/login');
+                      },
+                      textCancel: 'بیخیال',
+                    );
+                  },
                 )
               ],
             )
