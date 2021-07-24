@@ -13,9 +13,10 @@ class SubjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData _themeData = Theme.of(context);
+    // TextStyle(fontFamily: 'Roya'),
     return Center(
       child: ElevatedButton(
-        child: Text(subject.name! ,style: TextStyle(fontFamily: 'Roya'),),
+        child: Text(subject.name! ,style: _themeData.textTheme.headline6!.copyWith(fontFamily: 'Roya')),
         onPressed: () {
           Get.toNamed("/question_page", arguments: {'subject': subject});
         },

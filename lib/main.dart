@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:ui';
+import 'package:mobdev_game_project/utils/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -61,7 +62,10 @@ class MyApp extends StatelessWidget {
   //const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    double screenWidth = window.physicalSize.width;
+
     return GetMaterialApp(
+      theme: ThemeData(primaryColor: COLOR_WHITE, accentColor: COLOR_DARK_BLUE, textTheme: screenWidth < 500 ? TEXT_THEME_SMALL : TEXT_THEME_DEFAULT, fontFamily: "Montserrat"),
       initialRoute: '/main-pages',
       getPages: [
         GetPage(
