@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/user.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
-import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 
 class AccountsPageProfile extends StatelessWidget {
   //const AccountsPageProfile({Key? key}) : super(key: key);
@@ -17,10 +16,52 @@ class AccountsPageProfile extends StatelessWidget {
           children: [
             Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Image.asset(
-                  'assets/images/userPhoto.png',
-                  width: Get.width / 3,
-                  height: Get.width / 3,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(Get.width / 6),
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      final textStyle = TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      );
+                      final itemList = <ListTile>[
+                        ListTile(
+                          title: Text(
+                            'آپلود عکس پروفایل',
+                            textDirection: TextDirection.rtl,
+                            style: textStyle,
+                          ),
+                          leading: Icon(Icons.file_upload),
+                          onTap: () {
+                            // todo upload pfp
+                          },
+                        )
+                      ];
+                      // todo if current user has a pfp add options to edit or delete it
+                      return Container(
+                          child: ListView(
+                        children: itemList,
+                      ));
+                    },
+                  ),
+                  child: Container(
+                    width: Get.width / 3,
+                    height: Get.width / 3,
+                    decoration: BoxDecoration(
+                      // color: Colors.lightGreenAccent,
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/userPhoto.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(Get.width / 6 + 7.5)),
+                      border: Border.all(
+                        color: Colors.lightGreenAccent,
+                        width: 7.5,
+                      ),
+                    ),
+                  ),
                 )),
             Padding(
                 padding: EdgeInsets.all(16.0),
