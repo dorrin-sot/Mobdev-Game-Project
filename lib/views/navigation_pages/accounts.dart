@@ -1,4 +1,5 @@
 import 'package:auth_buttons/auth_buttons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
@@ -49,7 +50,6 @@ class AccountsPageProfile extends StatelessWidget {
                     width: Get.width / 3,
                     height: Get.width / 3,
                     decoration: BoxDecoration(
-                      // color: Colors.lightGreenAccent,
                       image: DecorationImage(
                         image: AssetImage('assets/images/userPhoto.png'),
                         fit: BoxFit.cover,
@@ -68,7 +68,52 @@ class AccountsPageProfile extends StatelessWidget {
                 child: Text(
                   appController.currentUser!.username!,
                   style: TextStyle(color: Colors.black),
-                ))
+                )),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 20, horizontal: Get.width / 4),
+                  child: TextButton(
+                    child: Text(
+                      'حذف اکانت',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    onPressed: () {
+                      Get.defaultDialog(
+                        title: 'خطر!',
+                        titleStyle: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                        content: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 30),
+                          child: Text(
+                            'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
+                            style: TextStyle(fontSize: 15),
+                            textAlign: TextAlign.center,
+                            textDirection: TextDirection.rtl,
+                          ),
+                        ),
+                        textConfirm: 'حذف',
+                        onConfirm: () async {
+                          final currentUser =
+                              Get.find<AppController>().currentUser!;
+                          await currentUser.delete();
+                          await currentUser.logout();
+                          Get.back();
+                          Get.find<NavBarController>().setCurrent('/account/login');
+                        },
+                        textCancel: 'بیخیال',
+                      );
+                    },
+                  ),
+                )
+              ],
+            )
           ],
         ),
       );
