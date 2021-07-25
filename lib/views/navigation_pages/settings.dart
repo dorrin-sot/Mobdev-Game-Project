@@ -14,7 +14,7 @@ class SettingsPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text("تنظیمات",
-                style: TextStyle(color: Colors.black, fontFamily: 'Traffic')),
+                style: TextStyle(color: Colors.black, fontFamily: 'Lalezar',fontSize: 30)),
           ),
           Row(children: [
             Obx(() => Padding(
