@@ -16,44 +16,60 @@ class QuestionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Question Page'),
-        automaticallyImplyLeading: false,
-        brightness: Brightness.light,
-      ),
-      body: FutureBuilder(
-        future: questionPageController.fetchQuestions(subject),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (!snapshot.hasData ||
-              (snapshot.data as List<Question>).length == 0) {
-            return LoadingSupportPage("سوالات!");
-          } else {
-            return Center(
-              child: Obx(() {
-                return Column(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Text(
-                            "question ${questionPageController.index.toString()} from controller: " +
-                                questionPageController
-                                    .questions![questionPageController.index]
-                                    .question!),
+      body: DecoratedBox(
+        position: DecorationPosition.background,
+
+        decoration: BoxDecoration(gradient: _linearGradient),
+        child: FutureBuilder(
+
+          future: questionPageController.fetchQuestions(subject),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (!snapshot.hasData ||
+                (snapshot.data as List<Question>).length == 0) {
+              return LoadingSupportPage("سوالات");
+            } else {
+              return Center(
+                child: Obx(() {
+                  return Column(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Center(
+                          child: Text(
+                              "question ${questionPageController.index.toString()} from controller: " +
+                                  questionPageController
+                                      .questions![questionPageController.index]
+                                      .question!),
+                        ),
                       ),
-                    ),
-                    Expanded(flex: 6, child: AnswersListView()),
-                    Expanded(flex: 3, child: Clock()),
-                  ],
-                );
-              }),
-            );
-          }
-        },
+                      Expanded(flex: 6, child: AnswersListView()),
+                      Expanded(flex: 3, child: Clock()),
+                    ],
+                  );
+                }),
+              );
+            }
+          },
+        ),
       ),
     );
   }
-
+  LinearGradient _linearGradient =LinearGradient(
+    colors: [
+      Colors.yellow,
+      Colors.red,
+      Colors.indigo,
+      Colors.teal,
+    ],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    stops: [
+      0.1,
+      0.4,
+      0.6,
+      0.9,
+    ],
+  );
   ListView AnswersListView() {
     questionPageController.correctAnswer = questionPageController
             .questions![questionPageController.index].correctAns! -
