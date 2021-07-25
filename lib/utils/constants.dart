@@ -36,38 +36,64 @@ Color getButtonColor(Set<MaterialState> states) {
   };
   if (states.any(interactiveStates.contains)) {
     return COLOR_DARK_BLUE;
-
   }
   return COLOR_BLACK;
 }
 
 const TextTheme TEXT_THEME_DEFAULT = TextTheme(
-    headline1: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 26),
-    headline2: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 22),
-    headline3: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 20),
-    headline4: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 16),
-    headline5: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 14),
-    headline6: TextStyle(
-        color: COLOR_WHITE, fontWeight: FontWeight.w700, fontSize: 12),
-    bodyText1: TextStyle(
-        color: COLOR_WHITE,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        height: 1.5),
-    bodyText2: TextStyle(
-        color: COLOR_WHITE,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        height: 1.5),
-    subtitle1: TextStyle(
-        color: COLOR_WHITE, fontSize: 12, fontWeight: FontWeight.w400),
-    subtitle2: TextStyle(
-        color: COLOR_YELLOW, fontSize: 12, fontWeight: FontWeight.w400));
+  headline1: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 26,
+      fontFamily: 'Roya'),
+  headline2: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 22,
+      fontFamily: 'Roya'),
+  headline3: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 20,
+      fontFamily: 'Roya'),
+  headline4: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 16,
+      fontFamily: 'Roya'),
+  headline5: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 14,
+      fontFamily: 'Roya'),
+  headline6: TextStyle(
+      color: COLOR_WHITE,
+      fontWeight: FontWeight.w700,
+      fontSize: 12,
+      fontFamily: 'Roya'),
+  bodyText1: TextStyle(
+      color: COLOR_WHITE,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.5,
+      fontFamily: 'Roya'),
+  bodyText2: TextStyle(
+      color: COLOR_WHITE,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.5,
+      fontFamily: 'Roya'),
+  subtitle1: TextStyle(
+      color: COLOR_WHITE,
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'Roya'),
+  subtitle2: TextStyle(
+      color: COLOR_YELLOW,
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'Roya'),
+);
 
 const TextTheme TEXT_THEME_SMALL = TextTheme(
     headline1: TextStyle(
