@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
     double screenWidth = window.physicalSize.width;
 
     return GetMaterialApp(
-      theme: ThemeData(primaryColor: COLOR_WHITE, accentColor: COLOR_DARK_BLUE, textTheme: screenWidth < 500 ? TEXT_THEME_SMALL : TEXT_THEME_DEFAULT, fontFamily: "Montserrat"),
+      theme : THEME_DATA,
       initialRoute: '/main-pages',
       getPages: [
         GetPage(

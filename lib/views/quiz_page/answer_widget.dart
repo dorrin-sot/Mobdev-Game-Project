@@ -15,11 +15,12 @@ class AnswerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData _themeData = Theme.of(context);
     return Container(
       child: Obx(() {
         return ElevatedButton(
           onPressed: controller.waiting
-              ? (){}
+              ? () {}
               : () {
                   controller.prepareNextQ(index, false);
                 },
@@ -27,13 +28,10 @@ class AnswerWidget extends StatelessWidget {
             answer,
             textAlign: TextAlign.center,
           ),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                  controller.colorSwitch[index].color),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ))),
+          style: _themeData.elevatedButtonTheme.style!.copyWith(
+            backgroundColor:
+                MaterialStateProperty.all(controller.colorSwitch[index].color),
+          ),
         );
       }),
       // color: controller.colorSwitch.color,
