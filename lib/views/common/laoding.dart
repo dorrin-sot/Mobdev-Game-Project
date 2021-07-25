@@ -19,7 +19,7 @@ class LoadingSupportPage extends StatelessWidget {
             child: Text(
                " در حال چکش کاری "+ whatToShow ,
               textAlign: TextAlign.center,
-              style: _themeData.textTheme.headline2!.copyWith(fontFamily: "Trafic")
+              style: _themeData.textTheme.headline2!
             ),
           ),
           SizedBox(

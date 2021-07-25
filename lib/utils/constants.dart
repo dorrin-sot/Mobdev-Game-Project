@@ -45,54 +45,54 @@ const TextTheme TEXT_THEME_DEFAULT = TextTheme(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 26,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   headline2: TextStyle(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 22,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   headline3: TextStyle(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 20,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   headline4: TextStyle(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 16,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   headline5: TextStyle(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 14,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   headline6: TextStyle(
       color: COLOR_WHITE,
       fontWeight: FontWeight.w700,
       fontSize: 12,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   bodyText1: TextStyle(
       color: COLOR_WHITE,
       fontSize: 14,
       fontWeight: FontWeight.w500,
       height: 1.5,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   bodyText2: TextStyle(
       color: COLOR_WHITE,
       fontSize: 14,
       fontWeight: FontWeight.w500,
       height: 1.5,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   subtitle1: TextStyle(
       color: COLOR_WHITE,
       fontSize: 12,
       fontWeight: FontWeight.w400,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
   subtitle2: TextStyle(
       color: COLOR_YELLOW,
       fontSize: 12,
       fontWeight: FontWeight.w400,
-      fontFamily: 'Roya'),
+      fontFamily: 'Traffic'),
 );
 
 const TextTheme TEXT_THEME_SMALL = TextTheme(
