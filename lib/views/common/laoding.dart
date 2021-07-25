@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class LoadingSupportPage extends StatelessWidget {
   final String whatToShow;
 
-  LoadingSupportPage(this.whatToShow); //todo make this page beautiful
+  LoadingSupportPage(this.whatToShow);
   //todo make an animation here
 
   @override

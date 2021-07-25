@@ -14,7 +14,7 @@ extension ColorSwitchExtension on ColorSwitch {
   Color get color {
     switch (this) {
       case ColorSwitch.MAIN:
-        return Colors.blue;
+        return Colors.transparent;
       case ColorSwitch.WRONG:
         return Colors.red;
       case ColorSwitch.CORRECT:
@@ -29,6 +29,7 @@ class QuestionPageController extends GetxController {
   RxInt _questionIndex = 0.obs;
   RxBool _waiting = false.obs;
   RxList<int> _results = [0, 0, 0, 0].obs;
+
 
   bool get waiting => _waiting.value;
 
@@ -72,15 +73,24 @@ class QuestionPageController extends GetxController {
       }
     }
   }
-
   Future<List<Question>?> fetchQuestions(Subject subject) async {
-    questions = await Question.getQsFromDBForQuiz(subject);
-    _results[0] = questions!.length;
-    print('res = ${questions!}');
-    if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
-    else {
-      // todo go back or show a dialog for if there are no more questions left in DB
-    }
+    // questions = await Question.getQsFromDBForQuiz(subject);
+    // _results[0] = questions!.length;
+    // print('res = ${questions!}');
+    // if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
+    // else {
+    //   // todo go back or show a dialog for if there are no more questions left in DB
+    // }
+    questions=[
+      Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+    ];
     return questions;
   }
 
@@ -107,7 +117,7 @@ class QuestionPageController extends GetxController {
               incorrectCount: wrong,
               timeoutCount: empty)
           .then((response) => print('results saved')));
-      Get.toNamed('/quiz-res', arguments: {
+      Get.offAndToNamed('/quiz-res', arguments: {
         'num': _results[0],
         'correct': correct,
         'wrong': wrong,
@@ -126,4 +136,5 @@ class QuestionPageController extends GetxController {
       controller.fixTime(timer);
     });
   }
+
 }

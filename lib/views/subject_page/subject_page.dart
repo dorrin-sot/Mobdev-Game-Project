@@ -11,48 +11,62 @@ class SubjectPage extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     return SafeArea(
       child: Scaffold(
-        body: Container(
-            child: FutureBuilder(
-                future: Subject.getAllFromDB(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData ||
-                      (snapshot.data as List<Subject>).length == 0) {
-                    return LoadingSupportPage("موضوعات!");
-                  } else {
-                    return Column(children: [
-                      chooseText(themeData),
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          childAspectRatio: 3,
-                          children: (snapshot.data as List<Subject>)
-                              .map<Widget>((subject) {
-                            return SubjectWidget(subject);
-                          }).toList(),
-                          // children: ccc.map((e) => Text(e)).toList(),
-                        ),
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.deepPurple, Colors.deepOrange],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                tileMode: TileMode.repeated),
+            // color: themeData.primaryColor
+          ),
+          child: FutureBuilder(
+              future: Subject.getAllFromDB(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData ||
+                    (snapshot.data as List<Subject>).length == 0) {
+                  return LoadingSupportPage("موضوعات");
+                } else {
+                  return Column(children: [
+                    Expanded(flex: 2, child: chooseText(themeData)),
+                    Expanded(
+                      flex: 8,
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 2,
+                        children: (snapshot.data as List<Subject>)
+                            .map<Widget>((subject) {
+                          return SubjectWidget(subject);
+                        }).toList(),
                       ),
-                    ]);
-                  }
-                })),
+                    ),
+                  ]);
+                }
+              }),
+        ),
       ),
     );
   }
-  Widget chooseText(ThemeData themeData){
+
+  Widget chooseText(ThemeData themeData) {
     return Container(
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.cyanAccent, Colors.blueAccent],
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              tileMode: TileMode.mirror)),
+        boxShadow: [
+          BoxShadow(
+            color: themeData.primaryColor.withOpacity(.50),
+            spreadRadius: 0.01,
+            blurRadius: 100,
+          )
+        ],
+      ),
       child: SizedBox(
         height: 50,
         child: Center(
           child: AnimatedTextKit(
             repeatForever: true,
             animatedTexts: [
-              FadeAnimatedText("لطفا یکیرو انتخاب کن",textStyle: themeData.textTheme.headline6),
+              FadeAnimatedText("لطفا یک موضوع انتخاب کن",
+                  textStyle: themeData.textTheme.headline2),
             ],
           ),
         ),
@@ -60,4 +74,3 @@ class SubjectPage extends StatelessWidget {
     );
   }
 }
-

@@ -18,19 +18,27 @@ class AnswerWidget extends StatelessWidget {
     ThemeData _themeData = Theme.of(context);
     return Container(
       child: Obx(() {
-        return ElevatedButton(
+        return OutlinedButton(
           onPressed: controller.waiting
               ? () {}
               : () {
                   controller.prepareNextQ(index, false);
                 },
-          child: Text(
-            answer,
-            textAlign: TextAlign.center,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                answer,
+                textAlign: TextAlign.center,
+                style: _themeData.textTheme.headline3!.copyWith(color: Colors.black),
+              ),
+            ),
           ),
-          style: _themeData.elevatedButtonTheme.style!.copyWith(
+          style: OutlinedButton.styleFrom(
             backgroundColor:
-                MaterialStateProperty.all(controller.colorSwitch[index].color),
+            controller.colorSwitch[index].color,
+
           ),
         );
       }),

@@ -10,22 +10,15 @@ class Clock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [HexColor('#FFFFFF'), HexColor('#F0F0F0')],
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              tileMode: TileMode.clamp)),
-      child: SafeArea(
-        child: Center(
-            child: Obx(() {
-              return ClockWidget(
-                seconds: clockController.dateTime.value,
-              );
-            })),
-      ),
-    );
+    return Center(
+        child: Obx(() {
+          return ScaleTransition(
+            scale: clockController.clockAnimationController,
+            child: ClockWidget(
+              seconds: clockController.dateTime.value,
+            ),
+          );
+        }));
   }
 }
 
