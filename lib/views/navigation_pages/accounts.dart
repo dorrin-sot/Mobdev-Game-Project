@@ -90,17 +90,20 @@ class AccountsPageLogin extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: ElevatedButton(
                     onPressed: () {
+                      showLoaderDialog(context);
                       User(controller.usernameController.text,
                               controller.passwordController.text)
                           .login()
                           .then((response) {
                         if (response.success) {
+                          Navigator.pop(context);
                           Get.find<NavBarController>().setCurrent('/home');
                           Get.snackbar(
                               "عملیات موفق", "با موفقیت وارد اکانتت شدی",
-                              backgroundColor: Colors.black,
+                              backgroundColor: Colors.blue,
                               colorText: Colors.white);
                         } else {
+                          Navigator.pop(context);
                           String errorMessage = "";
                           switch (response.error!.code) {
                             case 100:
@@ -130,7 +133,10 @@ class AccountsPageLogin extends StatelessWidget {
                         return response;
                       });
                     },
-                    child: Text("ورود",style: TextStyle(fontFamily: 'Traffic'),))),
+                    child: Text(
+                      "ورود",
+                      style: TextStyle(fontFamily: 'Traffic'),
+                    ))),
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: GoogleAuthButton(
@@ -155,6 +161,32 @@ class AccountsPageLogin extends StatelessWidget {
           ],
         ),
       );
+
+  showLoaderDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(
+              margin: EdgeInsets.only(left: 7),
+              child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text(
+                    "لطفا اندکی صبر بنمای...",
+                    style:
+                        TextStyle(fontFamily: 'Traffic', color: Colors.black),
+                  ))),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }
 
 class AccountsPageRegister extends StatelessWidget {
@@ -171,7 +203,8 @@ class AccountsPageRegister extends StatelessWidget {
                 child: Center(
                     child: Text(
                   "ثبت نام",
-                  style: TextStyle(color: Colors.black, fontFamily: 'Lalezar',fontSize: 30),
+                  style: TextStyle(
+                      color: Colors.black, fontFamily: 'Lalezar', fontSize: 30),
                 ))),
             Padding(
                 padding: EdgeInsets.all(16.0),
@@ -223,18 +256,21 @@ class AccountsPageRegister extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: ElevatedButton(
                     onPressed: () {
+                      showLoaderDialog(context);
                       User.forParseRegister(controller.usernameController.text,
                               controller.passwordController.text,
                               emailAddress: controller.emailController.text)
                           .signUp()
                           .then((response) {
                         if (response.success) {
+                          Navigator.pop(context);
                           Get.find<NavBarController>().setCurrent('/home');
                           Get.snackbar(
                               "عملیات موفق", "ثبت نامت با موفقیت انجام شد",
-                              backgroundColor: Colors.black,
+                              backgroundColor: Colors.blue,
                               colorText: Colors.white);
                         } else {
+                          Navigator.pop(context);
                           String errorMessage = "";
                           switch (response.error!.code) {
                             case 100:
@@ -274,17 +310,49 @@ class AccountsPageRegister extends StatelessWidget {
                       });
                       ;
                     },
-                    child: Text("ثبت نام",style: TextStyle(fontFamily: 'Traffic'),))),
+                    child: Text(
+                      "ثبت نام",
+                      style: TextStyle(fontFamily: 'Traffic'),
+                    ))),
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
                     onPressed: () {
                       Get.back();
                     },
-                    child: Text("قبلا اکانت ساختی؟ برای ورود کلیک کن",style: TextStyle(fontFamily: 'Traffic'),)))
+                    child: Text(
+                      "قبلا اکانت ساختی؟ برای ورود کلیک کن",
+                      style: TextStyle(fontFamily: 'Traffic'),
+                    )))
           ],
         ),
       );
+
+  showLoaderDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(
+              margin: EdgeInsets.only(left: 7),
+              child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text(
+                    "لطفا اندکی صبر بنمای...",
+                    style:
+                        TextStyle(fontFamily: 'Traffic', color: Colors.black),
+                  ))),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }
 
 class AccountPageLoginController extends GetxController {
