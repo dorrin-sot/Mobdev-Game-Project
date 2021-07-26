@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,6 +7,7 @@ import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:pedantic/pedantic.dart';
 
 class User extends ParseUser implements ParseCloneable {
   static const String _keyTableName = '_User';
@@ -32,6 +34,7 @@ class User extends ParseUser implements ParseCloneable {
   DateTime? heartsLastUpdateTime;
 
   static const int PTS_WIN_PER_CORRECT = 1;
+  static const int MONEY_WIN_PER_25_PERC = 20;
 
   GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
@@ -195,17 +198,26 @@ class User extends ParseUser implements ParseCloneable {
   double get minutesTillNext => (1 - timeDoneFraction) * HEART_ADD_INTERVAL;
 
   updateHearts() async {
-    update();
-
     if (hearts! >= HEARTS_MAX) return;
 
-    final dHeart = timeDoneFraction.floor();
-    setIncrement(keyHearts, dHeart);
-    heartsLastUpdateTime = heartsLastUpdateTime!
-        .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
-        .at0secs();
+    final dHeart = min(timeDoneFraction.floor(), HEARTS_MAX - hearts!);
+    if (dHeart <= 0) return;
 
-    save();
+    setIncrement(keyHearts, dHeart);
+    set(
+        keyHeartsLastUpdateTime,
+        heartsLastUpdateTime!
+            .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
+            .at0secs());
+
+    await update();
+
+    await save().then((value) async {
+      Get.find<HeartController>().update();
+      final c = Get.find<AppController>();
+      await c.currentUser!.update();
+      c.update();
+    });
   }
 
   useHeart() async {
@@ -217,10 +229,32 @@ class User extends ParseUser implements ParseCloneable {
 
     setDecrement(keyHearts, 1);
     await save();
-    await update();
-    Get.find<HeartController>()
-      ..hearts.value = hearts
-      ..timeRemaining.value = Get.find<HeartController>().getRemainingTime()!;
+
+    final hc = Get.find<HeartController>();
+    unawaited(hc.currentUser.update().then((value) => hc.update()));
+  }
+
+  @override
+  Future<ParseResponse> update() async {
+    final updatedResponse = await super.update();
+
+    if (!updatedResponse.success) return updatedResponse;
+
+    final parseUser = updatedResponse.result! as ParseUser;
+    final json = parseUser.getJsonMap();
+
+    correctQCount = json[keyCorrectQCount] ?? correctQCount;
+    incorrectQCount = json[keyIncorrectQCount] ?? incorrectQCount;
+    timeoutQCount = json[keyTimeoutQCount] ?? timeoutQCount;
+    hearts = json[keyHearts] ?? hearts;
+    money = json[keyMoney] ?? money;
+    points = json[keyPoints] ?? points;
+    if (json[keyHeartsLastUpdateTime] != null)
+      heartsLastUpdateTime = DateTime.parse(
+          (json[keyHeartsLastUpdateTime] as Map<String, dynamic>)['iso']);
+    objectId = json['objectId'] ?? objectId;
+
+    return updatedResponse;
   }
 
   static Future<int> count() async {

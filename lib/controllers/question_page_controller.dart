@@ -37,6 +37,34 @@ class QuestionPageController extends GetxController {
     _waiting.value = value;
   }
 
+
+  @override
+  void onInit() {
+    print("quetion+_Controller, onInit ");
+    super.onInit();
+  }
+
+
+  @override
+  void onReady() {
+    print("quetion+_Controller, onReady ");
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    print("question_controller, onClose ");
+
+    super.onClose();
+  }
+
+
+  @override
+  void dispose() {
+    print("question_controller, onDispose ");
+    super.dispose();
+  }
+
   RxList<ColorSwitch> _colorSwitch =
       List.generate(4, (index) => ColorSwitch.MAIN).obs;
 
@@ -86,6 +114,7 @@ class QuestionPageController extends GetxController {
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
     ];
     return questions;
   }
@@ -99,12 +128,12 @@ class QuestionPageController extends GetxController {
     if (!timeIsUp) {
       ClockController controller = Get.find<ClockController>();
       controller.timer.value.cancel();
+      controller.clockAnimationController.stop();
       controller.dateTime.value = 0;
     }
   }
 
   void resetForNextQOrQuit() {
-    //todo quit function
     if (_questionIndex == questions!.length - 1) {
       int correct = _results[1], wrong = _results[2], empty = _results[3];
       unawaited(Question.submitResults(
@@ -122,15 +151,11 @@ class QuestionPageController extends GetxController {
       return;
     }
     _questionIndex += 1;
-
     correctAnswer = questions![index].correctAns! - 1;
     _colorSwitch.value = List.filled(4, ColorSwitch.MAIN);
     _waiting.value = false;
     ClockController controller = Get.find<ClockController>();
-    controller.timer.value =
-        Timer.periodic(const Duration(seconds: 1), (timer) {
-      controller.fixTime(timer);
-    });
+    controller.repeatedSettingOffAnimationAndClock();
   }
 
 }

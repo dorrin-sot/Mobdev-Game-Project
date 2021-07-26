@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
-import 'package:mobdev_game_project/utils/constants.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mobdev_game_project/utils/constants.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 import 'package:mobdev_game_project/views/no_network_page.dart';
@@ -140,19 +141,10 @@ class AppController extends GetxController {
 
   Future<void> saveUserInPrefs(ParseUser? user) async {
     print('AppController::saveUserInPrefs');
-    // final prefs = await SharedPreferences.getInstance();
     if (user != null) {
-      // String sessionId = user.getJsonMap()[keyParamSessionToken];
-      // ParseCoreData().setSessionId(sessionId);
-      //
-      // unawaited(prefs.setString(keyParamSessionToken, sessionId));
-
       currentUser = User.fromJsonn(user.getJsonMap());
       isLoggedIn.value = true;
     } else {
-      // unawaited(prefs.remove(keyParamSessionToken));
-      // ParseCoreData().sessionId = null;
-
       currentUser = null;
       isLoggedIn.value = false;
     }
@@ -161,40 +153,16 @@ class AppController extends GetxController {
 
   Future<void> getUserFromPrefs() async {
     print('AppController::getUserFromPrefs');
+    ParseUser.currentUser().then((response) async {
+      final updatedResult = await (response as ParseUser).getUpdatedUser();
 
-    // final sessionId = await (await SharedPreferences.getInstance())
-    //     .getString(keyParamSessionToken);
-    //
-    // if (sessionId == null || sessionId == 'null') return;
-
-    // ParseCoreData().setSessionId(sessionId);
-
-    await ParseUser.currentUser()
-        .then((response) => (response as ParseUser).getUpdatedUser())
-        .then((response) {
       currentUser =
-          User.fromJsonn(((response).result as ParseUser).getJsonMap());
+          User.fromJsonn((updatedResult.result as ParseUser).getJsonMap());
       isLoggedIn.value = true;
       print('currentUser: $currentUser');
-    });
-    //     ;.then((result) {
-    //   if (result == null) return;
-    //
-    //   result.getUpdatedUser().then((response) {
-    //     print('getUserFromPrefs curUser: ${response.result.getJsonMap()}');
-    //
-    //     return (response.result as ParseUser).getJsonMap();
-    //   });
-    //
-    //   print('result: $result');
-    //   currentUser = User.fromJsonn((result as ParseUser).getJsonMap());
-    //   isLoggedIn.value = true;
-    //
-    // });
-    // currentUser = await User.fromJsonn(await ParseUser.currentUser()
-    //     .then((result) => (result as ParseUser).getJsonMap()));
 
-    update();
+      update();
+    });
   }
 
   Future<void> getMusicVolumePrefs() async {

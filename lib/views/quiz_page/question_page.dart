@@ -27,8 +27,9 @@ class QuestionPage extends StatelessWidget {
             return SafeArea(
               child: Container(
                 decoration: BoxDecoration(
+                color: Colors.deepPurpleAccent,
                     // gradient: LinearGradient(
-                    //     colors: [Colors.indigo, Colors.white],
+                    //     colors: [Colors.deepOrange,Colors.deepPurple, Colors.deepOrange],
                     //     begin: Alignment.topRight,
                     //     end: Alignment.bottomLeft,
                     //     tileMode: TileMode.clamp),
@@ -39,14 +40,12 @@ class QuestionPage extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 2,
-                          child: Center(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black.withOpacity(0.5),
-                                    blurRadius: 40,
-                                    spreadRadius: 20)
-                              ]),
+                          child: Container(
+
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.orange.withOpacity(0.7),
+                            child: Center(
                               child: Text(
                                 questionPageController
                                     .questions![questionPageController.index]
@@ -59,7 +58,7 @@ class QuestionPage extends StatelessWidget {
                         Expanded(
                             flex: 8,
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding: const EdgeInsets.all(25.0),
                               child: AnswersListView(),
                             )),
                         Expanded(flex: 4, child: Clock()),
