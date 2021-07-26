@@ -53,6 +53,9 @@ class Question extends ParseObject implements ParseCloneable {
 
     return query.query().then((response) async {
       final allQList = <Question>[];
+      if (!response.success || response.results == null)
+        return allQList;
+
       for (ParseObject parseQ in response.results!)
         allQList.add(Question.fromJson(parseQ.getJsonMap(), subject));
 
