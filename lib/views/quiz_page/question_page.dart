@@ -22,26 +22,26 @@ class QuestionPage extends StatelessWidget {
       Colors.purple,
     ],
   );
+
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+    ThemeData _themeData = Theme.of(context);
     return Scaffold(
       body: FutureBuilder(
         future: questionPageController.fetchQuestions(subject),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (!snapshot.hasData ||
-              (snapshot.data as List<Question>).length == 0) {
+          if (!snapshot.hasData) {
             return LoadingSupportPage("سوالات");
+          } else if ((snapshot.data as List<Question>).length == 0) {
+            return noResult(_themeData);
           } else {
             return SafeArea(
               child: Container(
                 // color: Colors.deepPurpleAccent.withAlpha(-100),
                 decoration: BoxDecoration(gradient: _gradient),
                 child: Center(
-
                   child: Obx(() {
                     return Column(
-
                       children: [
                         Expanded(
                           flex: 2,
@@ -56,7 +56,7 @@ class QuestionPage extends StatelessWidget {
                                 questionPageController
                                     .questions![questionPageController.index]
                                     .question!,
-                                style: themeData.textTheme.headline2,
+                                style: _themeData.textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -96,4 +96,45 @@ class QuestionPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget noResult(ThemeData _themeData) {
+    return DecoratedBox(
+      decoration: BoxDecoration(gradient: _linearGradient),
+
+      child: Center(
+        child: Container(
+
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: _themeData.primaryColor,
+              blurRadius: 30,
+              spreadRadius: 15,
+            ),
+          ]),
+          child: Text(
+            "متاسفانه سوالی برای نمایش وجود ندارد",
+            textAlign: TextAlign.center,
+            style: _themeData.textTheme.headline2!,
+          ),
+        ),
+      ),
+    );
+  }
+
+  LinearGradient _linearGradient = LinearGradient(
+    colors: [
+      Colors.yellow,
+      Colors.red,
+      Colors.indigo,
+      Colors.teal,
+    ],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    stops: [
+      0.1,
+      0.4,
+      0.6,
+      0.9,
+    ],
+  );
 }
