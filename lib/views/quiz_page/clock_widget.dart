@@ -43,9 +43,10 @@ class ClockWidget extends StatelessWidget {
             child: Text(
               '$s',
               style: TextStyle(
-                  color: HexColor('#A177B0'),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400),
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+              ),
             ));
       },
     );
@@ -92,8 +93,9 @@ final customWidth03 =
 CustomSliderWidths(trackWidth: 2, progressBarWidth: 10, shadowWidth: 16);
 final customColors03 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
-    trackColor: HexColor('#EFC8FC').withOpacity(0.3),
-    progressBarColor: HexColor('#A177B0'),
+    // trackColor: HexColor('#EFC8FC').withOpacity(0.3),
+    trackColor: Colors.orange,
+    progressBarColor:Colors.orange,
     shadowColor: HexColor('#EFC8FC'),
     shadowStep: 15.0,
     shadowMaxOpacity: 0.3);
@@ -103,7 +105,7 @@ final CircularSliderAppearance appearance03 = CircularSliderAppearance(
   customColors: customColors03,
   startAngle: 270,
   angleRange: 360,
-  size: 110.0,
+  size: 150.0,
   animationEnabled: false,
 
 );

@@ -12,7 +12,16 @@ class QuestionPage extends StatelessWidget {
   final Subject subject = Get.arguments['subject'];
   final QuestionPageController questionPageController =
       Get.put(QuestionPageController());
-
+  LinearGradient _gradient = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomCenter,
+    colors: [
+      Colors.teal,
+      Colors.indigo,
+      Colors.deepPurple,
+      Colors.purple,
+    ],
+  );
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -26,25 +35,31 @@ class QuestionPage extends StatelessWidget {
           } else {
             return SafeArea(
               child: Container(
-                decoration: BoxDecoration(
-                color: Colors.deepPurpleAccent,
-                    // gradient: LinearGradient(
-                    //     colors: [Colors.deepOrange,Colors.deepPurple, Colors.deepOrange],
-                    //     begin: Alignment.topRight,
-                    //     end: Alignment.bottomLeft,
-                    //     tileMode: TileMode.clamp),
-                    ),
+                // color: Colors.deepPurpleAccent.withAlpha(-100),
+                decoration: BoxDecoration(gradient: _gradient),
                 child: Center(
+
                   child: Obx(() {
                     return Column(
+
                       children: [
                         Expanded(
                           flex: 2,
                           child: Container(
-
+                            color: Colors.transparent,
+                            // decoration: BoxDecoration(
+                            //   gradient: LinearGradient(
+                            //       colors: [
+                            //         Colors.deepPurple,
+                            //         Colors.deepPurpleAccent,
+                            //       ],
+                            //       begin: Alignment.topRight,
+                            //       end: Alignment.bottomLeft,
+                            //       tileMode: TileMode.clamp),
+                            // ),
                             width: double.infinity,
                             height: double.infinity,
-                            color: Colors.orange.withOpacity(0.7),
+                            // color: Colors.purple,
                             child: Center(
                               child: Text(
                                 questionPageController

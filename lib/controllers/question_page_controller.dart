@@ -14,7 +14,7 @@ extension ColorSwitchExtension on ColorSwitch {
   Color get color {
     switch (this) {
       case ColorSwitch.MAIN:
-        return Colors.transparent;
+        return Colors.orange.shade50;
       case ColorSwitch.WRONG:
         return Colors.red;
       case ColorSwitch.CORRECT:
