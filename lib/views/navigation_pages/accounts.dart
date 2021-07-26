@@ -432,9 +432,8 @@ class AccountsPageRegister extends StatelessWidget {
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: () => Get.find<NavBarController>()
+                        .setCurrent('/account/login'),
                     child: Text(
                       "قبلا اکانت ساختی؟ برای ورود کلیک کن",
                       style: TextStyle(fontFamily: 'Traffic'),
