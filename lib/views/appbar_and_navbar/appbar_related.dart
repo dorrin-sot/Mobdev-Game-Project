@@ -42,6 +42,7 @@ class HeartIndicator extends StatelessWidget {
         width: 42.5,
         height: 42.5,
         child: Stack(
+          fit: StackFit.expand,
           children: [
             Center(
               child: GetBuilder<HeartController>(
@@ -56,13 +57,14 @@ class HeartIndicator extends StatelessWidget {
             ),
             Center(
               child: FittedBox(
+                fit: BoxFit.fitWidth,
                 child: GetBuilder<HeartController>(
                   builder: (c) => Text(
                     c.currentUser.hearts.toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.red.shade900,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
@@ -143,13 +145,14 @@ class MoneyIndicator extends StatelessWidget {
           ),
           Center(
             child: FittedBox(
+              fit: BoxFit.fitWidth,
               child: Obx(
                 () => Text(
                   c.money.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.deepOrange,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange.shade900,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
@@ -194,13 +197,14 @@ class PointsIndicator extends StatelessWidget {
           ),
           Center(
             child: FittedBox(
+              fit: BoxFit.fitWidth,
               child: Obx(
                 () => Text(
                   c.points.value.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.deepOrange.shade900,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
