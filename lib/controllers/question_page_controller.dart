@@ -29,33 +29,9 @@ class QuestionPageController extends GetxController {
   RxInt _questionIndex = 0.obs;
   RxBool _waiting = false.obs;
   RxList<int> _results = [0, 0, 0, 0].obs;
-
-
-  bool get waiting => _waiting.value;
-
-  set waiting(bool value) {
-    _waiting.value = value;
-  }
-
-
   RxList<ColorSwitch> _colorSwitch =
       List.generate(4, (index) => ColorSwitch.MAIN).obs;
-
-  List<ColorSwitch> get colorSwitch => _colorSwitch;
-
   final RxInt _correctAnswer = 0.obs;
-
-  int get correctAnswer => _correctAnswer.value;
-
-  set correctAnswer(int value) {
-    _correctAnswer.value = value;
-  }
-
-  get index => _questionIndex.value;
-
-  set index(value) {
-    _questionIndex.value = value;
-  }
 
   setColor(int index, bool timeIsUp) {
     print("index: $index , ans: $_correctAnswer");
@@ -74,21 +50,16 @@ class QuestionPageController extends GetxController {
       }
     }
   }
+
   Future<List<Question>?> fetchQuestions(Subject subject) async {
     questions = await Question.getQsFromDBForQuiz(subject);
     _results[0] = questions!.length;
     print('res = ${questions!}');
-    if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
+    if (_results[0] > 0)
+      Get.find<AppController>().currentUser!.useHeart();
     else {
       // todo go back or show a dialog for if there are no more questions left in DB
     }
-    // questions=[
-    //   Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
-    //   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-    //   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-    //   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-    //   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-    // ];
     return questions;
   }
 
@@ -133,4 +104,31 @@ class QuestionPageController extends GetxController {
     controller.repeatedSettingOffAnimationAndClock();
   }
 
+  bool get waiting => _waiting.value;
+
+  set waiting(bool value) {
+    _waiting.value = value;
+  }
+
+  List<ColorSwitch> get colorSwitch => _colorSwitch;
+
+  int get correctAnswer => _correctAnswer.value;
+
+  set correctAnswer(int value) {
+    _correctAnswer.value = value;
+  }
+
+  get index => _questionIndex.value;
+
+  set index(value) {
+    _questionIndex.value = value;
+  }
+
+// questions=[
+//   Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
+//   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+//   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+//   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+//   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+// ];
 }
