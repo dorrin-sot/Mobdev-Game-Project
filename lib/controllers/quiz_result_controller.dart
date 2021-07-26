@@ -8,6 +8,8 @@ class QuizResultController extends GetxController {
     _confettiController.value.play();
     super.onInit();
   }
-
+  void onPressed(){
+    Get.offAndToNamed("/main-pages");
+  }
   Rx<ConfettiController> get confettiController => _confettiController;
 }

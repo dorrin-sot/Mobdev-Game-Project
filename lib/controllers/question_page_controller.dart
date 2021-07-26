@@ -86,10 +86,6 @@ class QuestionPageController extends GetxController {
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
     ];
     return questions;
   }
