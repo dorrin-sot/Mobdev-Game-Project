@@ -75,16 +75,16 @@ class RankPage extends StatelessWidget {
       body: FutureBuilder(
         future: fetchRanks(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (!snapshot.hasData || (snapshot.data as List<User>).length == 0) {
+          if (!snapshot.hasData || (snapshot.data as List).length == 0) {
             return LoadingSupportPage("رنک ها");
           } else {
-            List<User> users = snapshot.data;
-            print(users.toString());
+            List infos = snapshot.data;
+            print(infos.toString());
             return SafeArea(
               child: Container(
                 color: Colors.white70,
                 child: ListView.builder(
-                    itemCount: users.length,
+                    itemCount: infos.length,
                     itemBuilder: (context, index) {
                       // return Text("salam" ,style: TextStyle(color: Colors.black),);
                       return Padding(
@@ -118,7 +118,7 @@ class RankPage extends StatelessWidget {
                               ),
                               tileColor: Colors.white70,
                               title: Text(
-                                users[index].username!,
+                                infos[index][1],
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: "Lalezar",
@@ -128,14 +128,14 @@ class RankPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "امتیاز",
+                                    "رنک ${infos[index][0].toString()}" ,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: "Lalezar",
                                         fontSize: 20),
                                   ),
                                   Text(
-                                    "امتیاز",
+                                    "امتیاز${infos[index][2].toString()}",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: "Lalezar",
@@ -162,46 +162,15 @@ class RankPage extends StatelessWidget {
     );
   }
 
-  // ListView.builder(itemCount: (snapshot.data as List<User>).length,itemBuilder: (context , index){
-  //
-  // },)
-  Future<List<User>> fetchRanks() {
-    return Future.delayed(Duration(seconds: 2), () {
-      return [
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-        User("y1", "p1"),
-      ];
-    });
+  Future<List<List>> fetchRanks() async {
+    final map = await User.getAllRanked();
+    List<List> resultList = [[]];
+    for(var e in map.entries){
+      for(var user in e.value){
+        resultList.add([e.key,user.username,user.points]);
+      }
+    }
+    resultList.removeAt(0);
+    return resultList;
   }
 }
