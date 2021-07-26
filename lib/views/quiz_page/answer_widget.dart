@@ -10,15 +10,20 @@ class AnswerWidget extends StatelessWidget {
     this.answer,
     this.index,
   );
-
+  static const Set<MaterialState> interactiveStates = <MaterialState>{
+    MaterialState.pressed,
+    MaterialState.hovered,
+    MaterialState.focused,
+  };
   QuestionPageController controller = Get.find<QuestionPageController>();
 
   @override
   Widget build(BuildContext context) {
     ThemeData _themeData = Theme.of(context);
     return Container(
+      margin: EdgeInsets.only(bottom: 12),
       child: Obx(() {
-        return OutlinedButton(
+        return ElevatedButton(
           onPressed: controller.waiting
               ? () {}
               : () {
@@ -27,22 +32,32 @@ class AnswerWidget extends StatelessWidget {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(15.0),
               child: Text(
                 answer,
                 textAlign: TextAlign.center,
-                style: _themeData.textTheme.headline3!.copyWith(color: Colors.black),
+                style: _themeData.textTheme.headline3!
+                    .copyWith(color: Colors.black),
               ),
             ),
           ),
-          style: OutlinedButton.styleFrom(
-            backgroundColor:
-            controller.colorSwitch[index].color,
-
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+              controller.colorSwitch[index].color,
+            ),
+            elevation: MaterialStateProperty.all(10),
+            shape: MaterialStateProperty.resolveWith((states) => myResolver(states))
           ),
         );
       }),
       // color: controller.colorSwitch.color,
     );
+  }
+  myResolver(Set<MaterialState> states) {
+
+    if (states.any(interactiveStates.contains)) {
+      return RoundedRectangleBorder(borderRadius: BorderRadius.zero);
+    }
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(30));
   }
 }
