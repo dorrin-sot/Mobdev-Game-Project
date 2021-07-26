@@ -1,36 +1,44 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
-import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/misc/custom_icons_icons.dart';
 import 'package:mobdev_game_project/models/user.dart';
 
+import '../../main.dart';
+
 class CustomAppbar extends AppBar {
-  static AppBar build() => AppBar(
-        title: Obx(
-          () => Get.find<AppController>().isLoggedIn.isFalse
-              ? const Text('Quiz boy 9000')
-              : signedIn(),
+  static AppBar build() {
+    final c = Get.find<AppController>();
+    return AppBar(
+      automaticallyImplyLeading: false,
+      toolbarHeight: 62.5,
+      title: SafeArea(
+        child: Obx(
+          () => c.isLoggedIn.isFalse ? Container() : signedIn(),
+        ),
+      ),
+    );
+  }
+
+  static Widget signedIn() => Padding(
+        padding: const EdgeInsets.only(bottom: 22.5),
+        child: Row(
+          children: [
+            HeartIndicator(),
+            Spacer(),
+            MoneyIndicator(),
+            Spacer(),
+            PointsIndicator()
+          ],
         ),
       );
-
-  static Widget signedIn() => Row(
-        children: [
-          HeartIndicator(),
-          Spacer(),
-          MoneyIndicator(),
-          Spacer(),
-          PointsIndicator()
-        ],
-      );
 }
+
 class HeartIndicator extends StatelessWidget {
   const HeartIndicator({Key? key}) : super(key: key);
 
@@ -38,40 +46,43 @@ class HeartIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(HeartController());
 
-    return SizedBox(
-        width: 42.5,
-        height: 42.5,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Center(
-              child: GetBuilder<HeartController>(
-                builder: (c) => LiquidCustomProgressIndicator(
-                  value: c.currentUser.timeDoneFraction,
-                  valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
-                  backgroundColor: Colors.white70,
-                  direction: Axis.vertical,
-                  shapePath: getHeartPath(Size(42.5, 42.5)),
-                ),
-              ),
+    return Column(
+      children: [
+        Center(
+          child: GetBuilder<HeartController>(
+            builder: (c) => LiquidCustomProgressIndicator(
+              value: c.currentUser.timeDoneFraction,
+              valueColor: AlwaysStoppedAnimation(Colors.red.shade500),
+              backgroundColor: Colors.lightBlueAccent.shade100,
+              direction: Axis.vertical,
+              shapePath: getHeartPath(Size.square(40)),
             ),
-            Center(
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: GetBuilder<HeartController>(
-                  builder: (c) => Text(
-                    c.currentUser.hearts.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.red.shade900,
-                      fontWeight: FontWeight.w900,
-                    ),
+          ),
+        ),
+        SizedBox(
+          height: 2.5,
+        ),
+        Center(
+          child: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: GetBuilder<HeartController>(
+              builder: (c) => Padding(
+                padding: const EdgeInsets.only(left: 2.5),
+                child: Text(
+                  c.currentUser.hearts.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+        )
+      ],
+    );
   }
 
   static Path getHeartPath(Size size) {
@@ -110,16 +121,18 @@ class HeartController extends GetxController {
   }
 
   void scheduleUpdateHeart() {
-    Cron().schedule(
-        Schedule.parse("*/10 * * * * *"),
-            () => update());
+    Cron().schedule(Schedule.parse("*/10 * * * * *"), () => update());
     Future.delayed(
         DateTime.now().difference(currentUser.heartsLastUpdateTime!
             .add(Duration(minutes: User.HEART_ADD_INTERVAL))),
-            () => Cron().schedule(
-            Schedule.parse(
-                "9,19,29,39,49,59 */${User.HEART_ADD_INTERVAL} * * * *"),
-                () => currentUser.updateHearts()));
+        () => Cron().schedule(
+                Schedule.parse(
+                    "9,19,29,39,49,59 */${User.HEART_ADD_INTERVAL} * * * *"),
+                () {
+              print('should update heart now :/');
+              if (Get.find<AppController>().currentUser != null)
+                currentUser.updateHearts();
+            }));
   }
 }
 
@@ -130,36 +143,35 @@ class MoneyIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.put(MoneyController());
 
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: Icon(
-              CustomIcons.coins,
-              size: 35,
-              color: Colors.yellow.shade200,
-            ),
+    return Column(
+      children: [
+        Center(
+          child: Icon(
+            CustomIcons.coins,
+            size: 35,
+            color: Colors.orangeAccent.shade200,
           ),
-          Center(
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Obx(
-                () => Text(
-                  c.money.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.deepOrange.shade900,
-                    fontWeight: FontWeight.w900,
-                  ),
+        ),
+        SizedBox(
+          height: 2.5,
+        ),
+        Center(
+          child: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Obx(
+              () => Text(
+                c.money.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -182,36 +194,32 @@ class PointsIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.put(PointController());
 
-    return SizedBox(
-      width: 42.5,
-      height: 42.5,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: Icon(
-              Icons.star,
-              size: 42.5,
-              color: Colors.yellow,
-            ),
+    return Column(
+      children: [
+        Center(
+          child: Icon(
+            Icons.star,
+            size: 37.5,
+            color: Colors.yellow,
           ),
-          Center(
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Obx(
-                () => Text(
-                  c.points.value.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.deepOrange.shade900,
-                    fontWeight: FontWeight.w900,
-                  ),
+        ),
+        Center(
+          child: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Obx(
+              () => Text(
+                c.points.value.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
