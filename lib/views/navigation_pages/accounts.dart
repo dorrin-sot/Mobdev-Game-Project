@@ -1,4 +1,3 @@
-import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,10 +63,13 @@ class AccountsPageProfile extends StatelessWidget {
                   ),
                 )),
             Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 child: Text(
                   appController.currentUser!.username!,
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 )),
             ButtonBar(
               alignment: MainAxisAlignment.center,
@@ -75,10 +77,13 @@ class AccountsPageProfile extends StatelessWidget {
                   EdgeInsets.symmetric(vertical: 20, horizontal: Get.width / 4),
               children: [
                 TextButton(
-                  child: Text(
-                    'حذف اکانت',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15),
+                  child: SizedBox(
+                    width: Get.width / 3,
+                    child: Text(
+                      'حذف اکانت',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
                   ),
                   onPressed: () {
                     Get.defaultDialog(
@@ -112,10 +117,13 @@ class AccountsPageProfile extends StatelessWidget {
                   },
                 ),
                 ElevatedButton(
-                  child: Text(
-                    'لاگ اوت',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15),
+                  child: SizedBox(
+                    width: Get.width / 3,
+                    child: Text(
+                      'لاگ اوت',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
                   ),
                   onPressed: () async {
                     Get.defaultDialog(
@@ -255,18 +263,6 @@ class AccountsPageLogin extends StatelessWidget {
                       "ورود",
                       style: TextStyle(fontFamily: 'Traffic'),
                     ))),
-            Padding(
-                padding: EdgeInsets.all(16.0),
-                child: GoogleAuthButton(
-                  onPressed: () {
-                    // todo your implementation
-                  },
-                  isLoading: false,
-                  style: const AuthButtonStyle(
-                    buttonType: AuthButtonType.secondary,
-                    iconType: AuthIconType.outlined,
-                  ),
-                )),
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(
