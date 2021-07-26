@@ -55,8 +55,11 @@ class ClockController extends GetxController with SingleGetTickerProviderMixin {
   }
   repeatedSettingOffAnimationAndClock(){
     startDateTime = DateTime.now();
+    millisecondsForAnimation =2000;
+
     _timer.value = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _appController.quizPlayer.setSpeed(1+alpha*(2000-millisecondsForAnimation)/2);
+      if(millisecondsForAnimation <1000)
+      _appController.quizPlayer.setSpeed(1+alpha*(1000-millisecondsForAnimation)/2);
       print("timer for clock_controller");
       millisecondsForAnimation = getMill();
       _clockAnimationController.duration =
@@ -86,6 +89,8 @@ class ClockController extends GetxController with SingleGetTickerProviderMixin {
   void onClose() {
     print("clock_controller, onClose ");
     AppController appController = Get.find<AppController>();
+    _appController.quizPlayer.setSpeed(1);
+
     appController.quizPlayer.stop();
     appController.player.play();
 

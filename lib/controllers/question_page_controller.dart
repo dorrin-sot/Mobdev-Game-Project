@@ -116,8 +116,8 @@ class QuestionPageController extends GetxController {
       Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
       Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+      // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
     ];
     return questions;
   }
@@ -128,6 +128,8 @@ class QuestionPageController extends GetxController {
       resetForNextQOrQuit();
     });
     waiting = true;
+    Get.find<AppController>().quizPlayer.setSpeed(1);
+
     if (!timeIsUp) {
       ClockController controller = Get.find<ClockController>();
       controller.timer.value.cancel();
