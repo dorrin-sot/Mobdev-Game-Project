@@ -115,6 +115,7 @@ class AppController extends GetxController {
   RxBool isLoggedIn = false.obs;
   User? currentUser;
   final player = AudioPlayer();
+  final quizPlayer = AudioPlayer();
   double musicVolume = 0.1;
 
   @override
@@ -122,6 +123,13 @@ class AppController extends GetxController {
     super.onInit();
     await prefsOnInit();
     await setMusic();
+  }
+
+
+  @override
+  void onClose() {
+    super.onClose();
+    player.dispose();
   }
 
   prefsOnInit() async {
@@ -170,14 +178,16 @@ class AppController extends GetxController {
 
   Future<void> setMusic() async {
     await player.setAsset('assets/sounds/Main-Theme.mp3');
+    await quizPlayer.setAsset('assets/sounds/Quiz-Song.mp3');
     setMusicVolume(musicVolume);
-    print("befor volume: " + musicVolume.toString());
     player.play();
     await player.setLoopMode(LoopMode.one);
+    await quizPlayer.setLoopMode(LoopMode.one);
   }
 
   Future<void> setMusicVolume(double value) async {
     await player.setVolume(value);
+    await quizPlayer.setVolume(value);
   }
 
   Future<void> saveMusicVolumeInPrefs() async {
