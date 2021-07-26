@@ -7,6 +7,7 @@ import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:pedantic/pedantic.dart';
 
 class User extends ParseUser implements ParseCloneable {
   static const String _keyTableName = '_User';
@@ -33,6 +34,7 @@ class User extends ParseUser implements ParseCloneable {
   DateTime? heartsLastUpdateTime;
 
   static const int PTS_WIN_PER_CORRECT = 1;
+  static const int MONEY_WIN_PER_25_PERC = 20;
 
   GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
@@ -227,7 +229,9 @@ class User extends ParseUser implements ParseCloneable {
 
     setDecrement(keyHearts, 1);
     await save();
-    Get.find<HeartController>().update();
+
+    final hc = Get.find<HeartController>();
+    unawaited(hc.currentUser.update().then((value) => hc.update()));
   }
 
   @override

@@ -98,7 +98,7 @@ class AccountsPageProfile extends StatelessWidget {
                             vertical: 20, horizontal: 30),
                         child: Text(
                           'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 15, color: Colors.black),
                           textAlign: TextAlign.center,
                           textDirection: TextDirection.rtl,
                         ),
@@ -135,7 +135,7 @@ class AccountsPageProfile extends StatelessWidget {
                             vertical: 20, horizontal: 30),
                         child: Text(
                           'مطمینی میخوای لاگ اوت کنی؟',
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 15, color: Colors.black),
                           textAlign: TextAlign.center,
                           textDirection: TextDirection.rtl,
                         ),

@@ -78,11 +78,12 @@ class Question extends ParseObject implements ParseCloneable {
           ..setIncrement(User.keyTimeoutQCount, timeoutCount)
           ..setIncrement(
               User.keyPoints, correctCount * User.PTS_WIN_PER_CORRECT)
-          ..setIncrement(User.keyMoney, cmpPoint / allQCount > 0.5 ? 1 : 0))
+          ..setIncrement(
+              User.keyMoney,
+              (cmpPoint / allQCount / 0.25).floor() *
+                  User.MONEY_WIN_PER_25_PERC))
         .save();
 
-    Get.find<HeartController>().currentUser.hearts = currentUser.hearts;
-    Get.find<HeartController>().update();
     Get.find<MoneyController>().money.value = currentUser.money!;
     Get.find<PointController>().points.value = currentUser.points!;
 
