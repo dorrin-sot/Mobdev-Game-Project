@@ -55,7 +55,7 @@ class Question extends ParseObject implements ParseCloneable {
         allQList.add(Question.fromJson(parseQ.getJsonMap(), subject));
 
       print('question query: $allQList');
-      return allQList;
+      return allQList..shuffle();
     });
   }
 
