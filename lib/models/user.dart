@@ -16,6 +16,7 @@ class User extends ParseUser implements ParseCloneable {
   static const String keyPassword = 'password';
   static const String keyEmail = 'email';
   static const String keyAllQuestions = 'allQuestions';
+  static const String keyUserStats = 'userStats';
   static const String keyCorrectQCount = 'correctQCount';
   static const String keyIncorrectQCount = 'incorrectQCount';
   static const String keyTimeoutQCount = 'timeoutQCount';
@@ -233,6 +234,13 @@ class User extends ParseUser implements ParseCloneable {
     final hc = Get.find<HeartController>();
     unawaited(hc.currentUser.update().then((value) => hc.update()));
   }
+  
+  // getStats ({Subject? suject}) async {
+  //   final userStatsQueryResponse = await getRelation(keyUserStats).getQuery();
+  //
+  //   final userStats = [];
+  //   userStats.
+  // }
 
   @override
   Future<ParseResponse> update() async {
@@ -255,6 +263,32 @@ class User extends ParseUser implements ParseCloneable {
     objectId = json['objectId'] ?? objectId;
 
     return updatedResponse;
+  }
+
+  // order is decending by point and ascending by username (from a to z)
+  static Future<Map<int, List<User>>> getAllRanked() async {
+    final rankedUserQuery =
+        await (QueryBuilder<ParseObject>(ParseUser.forQuery())
+              ..orderByDescending(keyPoints)
+              ..orderByAscending(keyUsername)
+              ..keysToReturn([keyPoints, keyUsername]))
+            .query();
+
+    final rankedUserList = Map<int, List<User>>();
+    int rank = 1;
+    for (var parseUser in rankedUserQuery.results!.cast<ParseUser>()) {
+      final json = parseUser.getJsonMap();
+
+      final user = new User(json[keyUsername], '')..points = json[keyPoints];
+
+      if (rankedUserList.containsKey(rank))
+        rankedUserList.update(rank, (list) => list..add(user));
+      else {
+        rankedUserList.putIfAbsent(rank, () => [user]);
+        rank++;
+      }
+    }
+    return rankedUserList;
   }
 
   static Future<int> count() async {
