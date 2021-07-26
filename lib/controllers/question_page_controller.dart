@@ -38,36 +38,6 @@ class QuestionPageController extends GetxController {
   }
 
 
-  @override
-  void onInit() {
-    print("quetion+_Controller, onInit ");
-
-
-
-    super.onInit();
-  }
-
-
-  @override
-  void onReady() {
-    print("quetion+_Controller, onReady ");
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    print("question_controller, onClose ");
-
-    super.onClose();
-  }
-
-
-  @override
-  void dispose() {
-    print("question_controller, onDispose ");
-    super.dispose();
-  }
-
   RxList<ColorSwitch> _colorSwitch =
       List.generate(4, (index) => ColorSwitch.MAIN).obs;
 
@@ -105,20 +75,20 @@ class QuestionPageController extends GetxController {
     }
   }
   Future<List<Question>?> fetchQuestions(Subject subject) async {
-    // questions = await Question.getQsFromDBForQuiz(subject);
-    // _results[0] = questions!.length;
-    // print('res = ${questions!}');
-    // if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
-    // else {
-    //   // todo go back or show a dialog for if there are no more questions left in DB
-    // }
-    questions=[
-      Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-      // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
-    ];
+    questions = await Question.getQsFromDBForQuiz(subject);
+    _results[0] = questions!.length;
+    print('res = ${questions!}');
+    if (_results[0] > 0) Get.find<AppController>().currentUser!.useHeart();
+    else {
+      // todo go back or show a dialog for if there are no more questions left in DB
+    }
+    // questions=[
+    //   Question(subject: subject ,correctAns: 2,answers: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ssssssssssssssssssssssssssssssss2","ssssssssssssssssssssssssss3","سلام به همه ی بجچ ها های ایران بدثاخنلئکملدرشبیبیشبیشبیشبیشبل"],question: "is this fucked up?"),
+    //   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+    //   Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+    //   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+    //   // Question(subject: subject ,correctAns: 2,answers: ["1","2","3","4"],question: "is this fucked up?"),
+    // ];
     return questions;
   }
 

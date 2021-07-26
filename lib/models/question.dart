@@ -17,7 +17,7 @@ class Question extends ParseObject implements ParseCloneable {
   int? correctAns;
   Subject? subject;
 
-  static const QUESTIONS_IN_QUIZ = 20;
+  static const QUESTIONS_IN_QUIZ = 3;
 
   Question({this.question, this.answers, this.correctAns, this.subject})
       : super(_keyTableName);

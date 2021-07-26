@@ -47,16 +47,7 @@ class QuestionPage extends StatelessWidget {
                           flex: 2,
                           child: Container(
                             color: Colors.transparent,
-                            // decoration: BoxDecoration(
-                            //   gradient: LinearGradient(
-                            //       colors: [
-                            //         Colors.deepPurple,
-                            //         Colors.deepPurpleAccent,
-                            //       ],
-                            //       begin: Alignment.topRight,
-                            //       end: Alignment.bottomLeft,
-                            //       tileMode: TileMode.clamp),
-                            // ),
+
                             width: double.infinity,
                             height: double.infinity,
                             // color: Colors.purple,
@@ -66,6 +57,7 @@ class QuestionPage extends StatelessWidget {
                                     .questions![questionPageController.index]
                                     .question!,
                                 style: themeData.textTheme.headline2,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
