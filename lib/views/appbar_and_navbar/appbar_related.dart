@@ -268,11 +268,6 @@ class MoneyController extends GetxController {
 
     money.value = Get.find<AppController>().currentUser!.money!;
   }
-
-  addMoney(int amount) {
-    money.value = max(money.value + amount, 0);
-    update();
-  }
 }
 
 class PointsIndicator extends StatelessWidget {
