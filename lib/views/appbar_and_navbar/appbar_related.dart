@@ -31,115 +31,47 @@ class CustomAppbar extends AppBar {
         ],
       );
 }
-
 class HeartIndicator extends StatelessWidget {
   const HeartIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(HeartController());
-    return Row(
-      children: [
-        InkWell(
-          // onTap: _showHeartTimerDialog(),
-          customBorder: CircleBorder(),
-          child: SizedBox(
-              width: 42.5,
-              height: 42.5,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Center(
-                    child: Obx(
-                      () => LiquidCustomProgressIndicator(
-                        value: c.hearts == User.HEARTS_MAX
-                            ? 1
-                            : c.timeRemaining.value.inSeconds.toDouble() /
-                                (User.HEART_ADD_INTERVAL * 60).toDouble(),
-                        valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
-                        backgroundColor: Colors.white70,
-                        direction: Axis.vertical,
-                        shapePath: getHeartPath(Size(42.5, 42.5)),
-                      ),
-                    ),
-                    // child: LiquidCustomProgressIndicator(
-                    //   value: ,
-                    //   valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
-                    //   backgroundColor: Colors.white70,
-                    //   direction: Axis.vertical,
-                    //   shapePath: getHeartPath(Size(42.5, 42.5)),
-                    // ),
-                  ),
-                  Center(
-                    child: FittedBox(
-                      child: Obx(
-                        () => Text(
-                          c.hearts.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.red.shade900,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              )),
-        ),
-      ],
-    );
-  }
+    Get.put(HeartController());
 
-  _showHeartTimerDialog() {
-    final countDownController = CountDownController();
-    final c = Get.find<HeartController>();
-    Get.defaultDialog(
-      title: 'قلب هات',
-      content: Obx(
-        () => IndexedStack(
-          index: c.getRemainingTime() == null ? 1 : 0,
+    return SizedBox(
+        width: 42.5,
+        height: 42.5,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            CircularCountDownTimer(
-              controller: countDownController,
-              width: Get.width / 3,
-              height: Get.width / 3,
-              duration: c.getRemainingTime()!.inSeconds,
-              fillColor: Colors.purple,
-              ringColor: Colors.purpleAccent,
-              textFormat: CountdownTextFormat.MM_SS,
-              isReverse: true,
-              onComplete: () {
-                if (c.getRemainingTime() != null) {
-                  final currentUser = Get.find<AppController>().currentUser!;
-                  currentUser.updateHearts();
-                  c.hearts.value = currentUser.hearts;
-
-                  countDownController.restart(
-                      duration: User.HEART_ADD_INTERVAL * 60);
-                } else
-                  countDownController.pause();
-              },
-            ),
-            Column(
-              children: [
-                LiquidCustomProgressIndicator(
-                  value: 0.7,
-                  valueColor: AlwaysStoppedAnimation(Colors.purpleAccent),
+            Center(
+              child: GetBuilder<HeartController>(
+                builder: (c) => LiquidCustomProgressIndicator(
+                  value: c.currentUser.timeDoneFraction,
+                  valueColor: AlwaysStoppedAnimation(Colors.red.shade300),
                   backgroundColor: Colors.white70,
                   direction: Axis.vertical,
-                  shapePath: getHeartPath(Size(Get.width / 4, Get.width / 4)),
+                  shapePath: getHeartPath(Size(42.5, 42.5)),
                 ),
-                Text(
-                  '!!قلبات پر شدن!! مبارکه',
-                  style: TextStyle(fontSize: 25, color: Colors.purple),
+              ),
+            ),
+            Center(
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: GetBuilder<HeartController>(
+                  builder: (c) => Text(
+                    c.currentUser.hearts.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.red.shade900,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                 ),
-              ],
+              ),
             )
           ],
-        ),
-      ),
-    );
+        ));
   }
 
   static Path getHeartPath(Size size) {
@@ -168,54 +100,26 @@ class HeartIndicator extends StatelessWidget {
 }
 
 class HeartController extends GetxController {
-  final hearts = Get.find<AppController>().currentUser!.hearts.obs;
-  final timeRemaining = Duration(minutes: User.HEART_ADD_INTERVAL).obs;
+  User currentUser = Get.find<AppController>().currentUser!;
 
   @override
   Future<void> onInit() async {
     super.onInit();
 
-    // Cron().schedule(Schedule.parse('* * * * * *'), () => updateTime());
-
-    await Get.find<AppController>()
-        .currentUser!
-        .updateHearts()
-        .then((value) => scheduleUpdateHeart());
+    await currentUser.updateHearts().then((value) => scheduleUpdateHeart());
   }
 
   void scheduleUpdateHeart() {
-    final currentUser = Get.find<AppController>().currentUser!;
-    Cron().schedule(Schedule.parse("*/10 * * * * *"), () {
-      timeRemaining.value = getRemainingTime()!;
-      print('heart 10sec update result: $hearts $timeRemaining');
-    });
+    Cron().schedule(
+        Schedule.parse("*/10 * * * * *"),
+            () => update());
     Future.delayed(
-      DateTime.now().difference(currentUser.heartsLastUpdateTime!
-          .add(Duration(minutes: User.HEART_ADD_INTERVAL))),
-      () => Cron().schedule(
-          Schedule.parse(
-              "9,19,29,39,49,59 */${User.HEART_ADD_INTERVAL} * * * *"),
-          () async {
-        await currentUser.updateHearts();
-        if (hearts.value != currentUser.hearts)
-          hearts.value = currentUser.hearts;
-      }),
-    );
-  }
-
-  Duration? getRemainingTime() {
-    final currentUser = Get.find<AppController>().currentUser!;
-    if (currentUser.hearts! == User.HEARTS_MAX) return Duration(); // is all 0
-
-    return currentUser.heartsLastUpdateTime!
-        .add(Duration(minutes: User.HEART_ADD_INTERVAL))
-        .difference(DateTime.now());
-  }
-
-  updateHeart() {
-    final currentUser = Get.find<AppController>().currentUser!;
-    currentUser.updateHearts();
-    update();
+        DateTime.now().difference(currentUser.heartsLastUpdateTime!
+            .add(Duration(minutes: User.HEART_ADD_INTERVAL))),
+            () => Cron().schedule(
+            Schedule.parse(
+                "9,19,29,39,49,59 */${User.HEART_ADD_INTERVAL} * * * *"),
+                () => currentUser.updateHearts()));
   }
 }
 
@@ -241,13 +145,14 @@ class MoneyIndicator extends StatelessWidget {
           ),
           Center(
             child: FittedBox(
+              fit: BoxFit.fitWidth,
               child: Obx(
                 () => Text(
                   c.money.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.deepOrange,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange.shade900,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
@@ -267,11 +172,6 @@ class MoneyController extends GetxController {
     super.onInit();
 
     money.value = Get.find<AppController>().currentUser!.money!;
-  }
-
-  addMoney(int amount) {
-    money.value = max(money.value + amount, 0);
-    update();
   }
 }
 
@@ -297,13 +197,14 @@ class PointsIndicator extends StatelessWidget {
           ),
           Center(
             child: FittedBox(
+              fit: BoxFit.fitWidth,
               child: Obx(
                 () => Text(
                   c.points.value.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.deepOrange.shade900,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),

@@ -44,6 +44,7 @@ dependencies:
   just_audio: ^0.9.2
   circular_countdown_timer: ^0.2.0
   confetti: ^0.5.5
+  modal_bottom_sheet: ^2.0.0
 
 dev_dependencies:
 

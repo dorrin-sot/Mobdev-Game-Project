@@ -1,10 +1,9 @@
-import 'package:auth_buttons/auth_buttons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/user.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
-import 'package:mobdev_game_project/views/navigation_pages/home.dart';
 
 class AccountsPageProfile extends StatelessWidget {
   //const AccountsPageProfile({Key? key}) : super(key: key);
@@ -17,17 +16,145 @@ class AccountsPageProfile extends StatelessWidget {
           children: [
             Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Image.asset(
-                  'assets/images/userPhoto.png',
-                  width: Get.width / 3,
-                  height: Get.width / 3,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(Get.width / 6),
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      final textStyle = TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      );
+                      final itemList = <ListTile>[
+                        ListTile(
+                          title: Text(
+                            'آپلود عکس پروفایل',
+                            textDirection: TextDirection.rtl,
+                            style: textStyle,
+                          ),
+                          leading: Icon(Icons.file_upload),
+                          onTap: () {
+                            // todo upload pfp
+                          },
+                        )
+                      ];
+                      // todo if current user has a pfp add options to edit or delete it
+                      return Container(
+                          child: ListView(
+                        children: itemList,
+                      ));
+                    },
+                  ),
+                  child: Container(
+                    width: Get.width / 3,
+                    height: Get.width / 3,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/userPhoto.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(Get.width / 6 + 7.5)),
+                      border: Border.all(
+                        color: Colors.lightGreenAccent,
+                        width: 7.5,
+                      ),
+                    ),
+                  ),
                 )),
             Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 child: Text(
                   appController.currentUser!.username!,
-                  style: TextStyle(color: Colors.black),
-                ))
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontFamily: 'Lalezar',
+                      fontWeight: FontWeight.bold),
+                )),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              buttonPadding:
+                  EdgeInsets.symmetric(vertical: 20, horizontal: Get.width / 4),
+              children: [
+                TextButton(
+                  child: SizedBox(
+                    width: Get.width / 3,
+                    child: Text(
+                      'حذف اکانت',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.defaultDialog(
+                      title: 'خطر!',
+                      titleStyle: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                      content: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 30),
+                        child: Text(
+                          'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                      textConfirm: 'حذف',
+                      onConfirm: () async {
+                        final currentUser =
+                            Get.find<AppController>().currentUser!;
+                        await currentUser.delete();
+                        await currentUser.logout();
+                        Get.back();
+                        Get.find<NavBarController>()
+                            .setCurrent('/account/login');
+                      },
+                      textCancel: 'بیخیال',
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  child: SizedBox(
+                    width: Get.width / 3,
+                    child: Text(
+                      'لاگ اوت',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  onPressed: () async {
+                    Get.defaultDialog(
+                      title: '',
+                      titleStyle: TextStyle(fontSize: .01),
+                      content: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 30),
+                        child: Text(
+                          'مطمینی میخوای لاگ اوت کنی؟',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                      textConfirm: 'لاگ اوت',
+                      onConfirm: () async {
+                        final currentUser =
+                            Get.find<AppController>().currentUser!;
+                        await currentUser.logout();
+                        Get.back();
+                        Get.find<NavBarController>()
+                            .setCurrent('/account/login');
+                      },
+                      textCancel: 'بیخیال',
+                    );
+                  },
+                )
+              ],
+            )
           ],
         ),
       );
@@ -137,18 +264,6 @@ class AccountsPageLogin extends StatelessWidget {
                       "ورود",
                       style: TextStyle(fontFamily: 'Traffic'),
                     ))),
-            Padding(
-                padding: EdgeInsets.all(16.0),
-                child: GoogleAuthButton(
-                  onPressed: () {
-                    // todo your implementation
-                  },
-                  isLoading: false,
-                  style: const AuthButtonStyle(
-                    buttonType: AuthButtonType.secondary,
-                    iconType: AuthIconType.outlined,
-                  ),
-                )),
             Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextButton(

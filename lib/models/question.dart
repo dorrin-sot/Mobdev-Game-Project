@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/models/user.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class Question extends ParseObject implements ParseCloneable {
@@ -71,14 +72,22 @@ class Question extends ParseObject implements ParseCloneable {
     int allQCount = correctCount + incorrectCount + timeoutCount;
     int cmpPoint = correctCount + incorrectCount * -2 + timeoutCount * -1;
 
-    return await (currentUser
+    final response = await (currentUser
           ..setIncrement(User.keyCorrectQCount, correctCount)
           ..setIncrement(User.keyIncorrectQCount, incorrectCount)
           ..setIncrement(User.keyTimeoutQCount, timeoutCount)
           ..setIncrement(
               User.keyPoints, correctCount * User.PTS_WIN_PER_CORRECT)
-          ..setIncrement(User.keyMoney, cmpPoint / allQCount > 0.5 ? 1 : 0))
+          ..setIncrement(
+              User.keyMoney,
+              (cmpPoint / allQCount / 0.25).floor() *
+                  User.MONEY_WIN_PER_25_PERC))
         .save();
+
+    Get.find<MoneyController>().money.value = currentUser.money!;
+    Get.find<PointController>().points.value = currentUser.points!;
+
+    return response;
   }
 
   @override
