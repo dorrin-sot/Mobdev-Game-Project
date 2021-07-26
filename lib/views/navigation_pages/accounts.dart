@@ -68,7 +68,8 @@ class AccountsPageProfile extends StatelessWidget {
                   appController.currentUser!.username!,
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontSize: 30,
+                      fontFamily: 'Lalezar',
                       fontWeight: FontWeight.bold),
                 )),
             ButtonBar(

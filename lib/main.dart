@@ -169,22 +169,6 @@ class AppController extends GetxController {
       isLoggedIn.value = true;
       print('currentUser: $currentUser');
     });
-    //     ;.then((result) {
-    //   if (result == null) return;
-    //
-    //   result.getUpdatedUser().then((response) {
-    //     print('getUserFromPrefs curUser: ${response.result.getJsonMap()}');
-    //
-    //     return (response.result as ParseUser).getJsonMap();
-    //   });
-    //
-    //   print('result: $result');
-    //   currentUser = User.fromJsonn((result as ParseUser).getJsonMap());
-    //   isLoggedIn.value = true;
-    //
-    // });
-    // currentUser = await User.fromJsonn(await ParseUser.currentUser()
-    //     .then((result) => (result as ParseUser).getJsonMap()));
 
     update();
   }
