@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'dart:ui' as ui;
 
 import 'package:mobdev_game_project/main.dart';
+import 'package:mobdev_game_project/views/rank_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -47,7 +48,19 @@ class HomePage extends StatelessWidget {
                   onPressed: onPressed,
                 ),
               ),
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Container(
+                child: ElevatedButton(
+                  child: Text(
+                    "رنک خفنا رو ببین",
+                    style: TextStyle(fontFamily: 'Traffic'),
+                  ),
+                  onPressed: () =>Get.to(RankPage()),
+                ),
+              ),
+            ),
           ],
         ),
       );

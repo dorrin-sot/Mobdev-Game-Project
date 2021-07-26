@@ -26,12 +26,20 @@ class Question extends ParseObject implements ParseCloneable {
 
   Question.clone() : this();
 
-  factory Question.fromJson(Map<String, dynamic> json, subject) => Question(
+  static Future<Question> fromJsonn(Map<String, dynamic> json, {Subject? subject}) async {
+    if (subject == null) {
+      final subjectObjId = json[Question.keySubject]['objectId'];
+      final subjectParseResponse = await Subject().getObject(subjectObjId);
+      final subjectMap = (subjectParseResponse.result as ParseObject).getJsonMap();
+      subject = Subject.fromJson(subjectMap);
+    }
+    return Question(
         question: json[keyQuestion],
         answers: json[keyAnswers].toString().getList(),
         correctAns: json[keyCorrectAns],
         subject: subject,
       )..objectId = json['objectId'];
+  }
 
   static Future<List<Question>> getQsFromDBForQuiz(Subject subject,
       {int numberOfQs = QUESTIONS_IN_QUIZ}) async {
@@ -57,7 +65,8 @@ class Question extends ParseObject implements ParseCloneable {
         return allQList;
 
       for (ParseObject parseQ in response.results!)
-        allQList.add(Question.fromJson(parseQ.getJsonMap(), subject));
+        allQList.add(
+            await Question.fromJsonn(parseQ.getJsonMap(), subject: subject));
 
       print('question query: $allQList');
       return allQList..shuffle();
@@ -108,7 +117,8 @@ class Question extends ParseObject implements ParseCloneable {
 
   @override
   String toString() {
-    return 'Question{question: $question'
+    return '${super.toString()}   '
+        'Question{question: $question'
         ', answers: $answers'
         ', correctAns: $correctAns'
         ', subject: $subject}';
