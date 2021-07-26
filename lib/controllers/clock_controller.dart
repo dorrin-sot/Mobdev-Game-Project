@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:mobdev_game_project/controllers/question_page_controller.dart';
+import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/views/quiz_page/clock_widget.dart';
 
 class ClockController extends GetxController with SingleGetTickerProviderMixin {
   Rx<Timer> _timer = Timer.periodic(const Duration(seconds: 1), (timer) {}).obs;
   int millisecondsForAnimation = 2000;
   late DateTime startDateTime;
-
+  double alpha =0.001;
   late final AnimationController _clockAnimationController =
       AnimationController(
     duration: Duration(milliseconds: millisecondsForAnimation),
     vsync: this,
   )..repeat(reverse: true).obs;
-
+  AppController _appController = Get.find<AppController>();
   AnimationController get clockAnimationController => _clockAnimationController;
   late final Animation<double> _animation = CurvedAnimation(
     parent: _clockAnimationController,
@@ -38,6 +39,11 @@ class ClockController extends GetxController with SingleGetTickerProviderMixin {
   @override
   void onInit() {
     print("clock_controller, onInit ");
+
+    _appController.player.stop();
+    _appController.quizPlayer.play();
+    //todo fix speed of music
+
     super.onInit();
   }
 
@@ -50,6 +56,7 @@ class ClockController extends GetxController with SingleGetTickerProviderMixin {
   repeatedSettingOffAnimationAndClock(){
     startDateTime = DateTime.now();
     _timer.value = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _appController.quizPlayer.setSpeed(1+alpha*(2000-millisecondsForAnimation)/2);
       print("timer for clock_controller");
       millisecondsForAnimation = getMill();
       _clockAnimationController.duration =
@@ -78,16 +85,14 @@ class ClockController extends GetxController with SingleGetTickerProviderMixin {
   @override
   void onClose() {
     print("clock_controller, onClose ");
+    AppController appController = Get.find<AppController>();
+    appController.quizPlayer.stop();
+    appController.player.play();
 
     _timer.value.cancel();
     super.onClose();
   }
 
-  @override
-  void dispose() {
-    print("clock_controller, onDispose ");
-    super.dispose();
-  }
 
   RxInt get dateTime => _dateTime;
 

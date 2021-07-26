@@ -41,6 +41,9 @@ class QuestionPageController extends GetxController {
   @override
   void onInit() {
     print("quetion+_Controller, onInit ");
+
+
+
     super.onInit();
   }
 
