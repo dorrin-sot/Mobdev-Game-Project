@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
               child: Container(
                 child: ElevatedButton(
                   child: Text(
-                    "ranks",
+                    "رنک خفنا رو ببین",
                     style: TextStyle(fontFamily: 'Traffic'),
                   ),
                   onPressed: () =>Get.to(RankPage()),

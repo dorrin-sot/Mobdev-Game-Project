@@ -20,6 +20,7 @@ class CustomBottomNavBar extends CurvedNavigationBar {
     final c = Get.put(NavBarController());
 
     return CustomBottomNavBar(
+
       index: 1,
       key: c.navbarStateKey,
       items: NavBarItem.allItems.map((e) => e.iconWidget!).toList(),
