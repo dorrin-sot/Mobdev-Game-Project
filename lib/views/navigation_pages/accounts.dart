@@ -2,12 +2,51 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
+import 'package:mobdev_game_project/models/bar_chart_graph.dart';
+import 'package:mobdev_game_project/models/bar_chart_model.dart';
 import 'package:mobdev_game_project/models/user.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class AccountsPageProfile extends StatelessWidget {
   //const AccountsPageProfile({Key? key}) : super(key: key);
-
+  final List<BarChartModel> data = [
+    BarChartModel(
+      name: "ریاضی",
+      percent: 20,
+      color: charts.ColorUtil.fromDartColor(Color(0xFF47505F)),
+    ),
+    BarChartModel(
+      name: "علوم",
+      percent: 60,
+      color: charts.ColorUtil.fromDartColor(Colors.red),
+    ),
+    BarChartModel(
+      name: "فارسی",
+      percent: 100,
+      color: charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    BarChartModel(
+      name: "تاریخ",
+      percent: 45,
+      color: charts.ColorUtil.fromDartColor(Colors.yellow),
+    ),
+    BarChartModel(
+      name: "دینی",
+      percent: 63,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent),
+    ),
+    BarChartModel(
+      name: "زبان",
+      percent: 100,
+      color: charts.ColorUtil.fromDartColor(Colors.pink),
+    ),
+    BarChartModel(
+      name: "عربی",
+      percent: 40,
+      color: charts.ColorUtil.fromDartColor(Colors.purple),
+    ),
+  ];
   final appController = Get.find<AppController>();
 
   @override
@@ -71,7 +110,7 @@ class AccountsPageProfile extends StatelessWidget {
                       fontSize: 30,
                       fontFamily: 'Lalezar',
                       fontWeight: FontWeight.bold),
-                )),
+                )),BarChartGraph(data),
             ButtonBar(
               alignment: MainAxisAlignment.center,
               buttonPadding:
@@ -154,7 +193,7 @@ class AccountsPageProfile extends StatelessWidget {
                   },
                 )
               ],
-            )
+            ),
           ],
         ),
       );
