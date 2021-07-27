@@ -21,8 +21,7 @@ class AccountsPageProfile extends StatelessWidget {
     return FutureBuilder(
         future: Subject.getAllFromDB(),
         builder: (context, snap) {
-          if (!snap.hasData ||
-              (snap.data as List<Subject>).length == 0) {
+          if (!snap.hasData || (snap.data as List<Subject>).length == 0) {
             return LoadingSupportPage("اطلاعات اولیه");
           } else {
             List<Subject> allSubj = snap.data as List<Subject>;
@@ -50,11 +49,19 @@ class AccountsPageProfile extends StatelessWidget {
                                 : 100 *
                                     (correctCount /
                                         (correctCount + wrongOrTimeoutCount));
+                        var barColor = percent > 75
+                            ? charts.ColorUtil.fromDartColor(Colors.green)
+                            : percent > 50
+                                ? charts.ColorUtil.fromDartColor(Colors.yellow)
+                                : percent > 25
+                                    ? charts.ColorUtil.fromDartColor(
+                                        Colors.orange)
+                                    : charts.ColorUtil.fromDartColor(
+                                        Colors.red);
                         data.add(BarChartModel(
                             name: subj.name,
                             percent: percent.round(),
-                            color:
-                                charts.ColorUtil.fromDartColor(Colors.green)));
+                            color: barColor));
                       }
                     }
                     return Center(
