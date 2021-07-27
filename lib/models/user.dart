@@ -42,7 +42,7 @@ class User extends ParseUser implements ParseCloneable {
       scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
 
   static const HEARTS_MAX = 20;
-  static final HEART_ADD_INTERVAL = 1; // in minutes
+  static final HEART_ADD_INTERVAL = 3; // in minutes
 
   User(String? username, String? password,
       {String? emailAddress, String? sessionToken})
