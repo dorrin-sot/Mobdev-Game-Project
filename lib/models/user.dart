@@ -42,7 +42,7 @@ class User extends ParseUser implements ParseCloneable {
       scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
 
   static const HEARTS_MAX = 20;
-  static final HEART_ADD_INTERVAL = 15; // in minutes
+  static final HEART_ADD_INTERVAL = 1; // in minutes
 
   User(String? username, String? password,
       {String? emailAddress, String? sessionToken})
@@ -212,7 +212,7 @@ class User extends ParseUser implements ParseCloneable {
   updateHearts() async {
     if (hearts! >= HEARTS_MAX) return;
 
-    final dHeart = min(timeDoneFraction.floor(), HEARTS_MAX - hearts!);
+    final dHeart = timeDoneFraction.floor();
     if (dHeart <= 0) return;
 
     setIncrement(keyHearts, dHeart);
@@ -222,7 +222,9 @@ class User extends ParseUser implements ParseCloneable {
             .add(Duration(minutes: dHeart * HEART_ADD_INTERVAL))
             .at0secs());
 
-    await update();
+    await save();
+
+    set(keyHearts, min(hearts!, HEARTS_MAX));
 
     await save().then((value) async {
       Get.find<HeartController>().update();
@@ -235,23 +237,17 @@ class User extends ParseUser implements ParseCloneable {
   useHeart() async {
     assert(hearts! > 0);
 
-    if (hearts == HEARTS_MAX) {
-      heartsLastUpdateTime = DateTime.now().at0secs();
-    }
+    if (hearts == HEARTS_MAX)
+      set(keyHeartsLastUpdateTime, DateTime.now().at0secs());
 
     setDecrement(keyHearts, 1);
     await save();
 
-    final hc = Get.find<HeartController>();
-    unawaited(hc.currentUser.update().then((value) => hc.update()));
+    Get.find<HeartController>().update();
+
+    final c = Get.find<AppController>();
+    await c.currentUser!.update().then((value) => c.update());
   }
-  
-  // getStats ({Subject? suject}) async {
-  //   final userStatsQueryResponse = await getRelation(keyUserStats).getQuery();
-  //
-  //   final userStats = [];
-  //   userStats.
-  // }
 
   @override
   Future<ParseResponse> update() async {

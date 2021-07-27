@@ -6,6 +6,7 @@ import 'package:mobdev_game_project/controllers/clock_controller.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
 import 'package:mobdev_game_project/models/subject.dart';
+import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:pedantic/pedantic.dart';
 
 enum ColorSwitch { MAIN, WRONG, CORRECT }
@@ -56,7 +57,7 @@ class QuestionPageController extends GetxController {
     _results[0] = questions!.length;
     print('res = ${questions!}');
     if (_results[0] > 0)
-      Get.find<AppController>().currentUser!.useHeart();
+      Get.find<HeartController>().currentUser.useHeart();
     else {
       // todo go back or show a dialog for if there are no more questions left in DB
     }

@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/subject.dart';
@@ -96,7 +98,7 @@ class Question extends ParseObject implements ParseCloneable {
     }
 
     int allQCount = correctCount + incorrectCount + timeoutCount;
-    int cmpPoint = correctCount + incorrectCount * -2 + timeoutCount * -1;
+    int cmpPoint = correctCount * 3 + incorrectCount * -2 + timeoutCount * -1;
 
     final response = await (currentUser
           ..setIncrement(User.keyCorrectQCount, correctCount)
@@ -106,7 +108,7 @@ class Question extends ParseObject implements ParseCloneable {
               User.keyPoints, correctCount * User.PTS_WIN_PER_CORRECT)
           ..setIncrement(
               User.keyMoney,
-              (cmpPoint / allQCount / 0.25).floor() *
+              max((cmpPoint / allQCount * QUESTIONS_IN_QUIZ).floor(), 0) *
                   User.MONEY_WIN_PER_25_PERC))
         .save();
 
