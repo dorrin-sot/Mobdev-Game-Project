@@ -23,7 +23,7 @@ class AccountsPageProfile extends StatelessWidget {
         builder: (context, snap) {
           if (!snap.hasData ||
               (snap.data as List<Subject>).length == 0) {
-            return LoadingSupportPage("اطلاع");
+            return LoadingSupportPage("اطلاعات اولیه");
           } else {
             List<Subject> allSubj = snap.data as List<Subject>;
             return FutureBuilder(
@@ -31,7 +31,7 @@ class AccountsPageProfile extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
                       (snapshot.data as List<UserStat>).length == 0) {
-                    return LoadingSupportPage("اطلاعات");
+                    return LoadingSupportPage("اطلاعات ثانویه");
                   } else {
                     List<UserStat> allStats = snapshot.data as List<UserStat>;
                     for (Subject subj in allSubj) {
