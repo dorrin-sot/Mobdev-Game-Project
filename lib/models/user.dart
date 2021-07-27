@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/question.dart';
+import 'package:mobdev_game_project/models/user_stats.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:pedantic/pedantic.dart';
@@ -186,7 +187,17 @@ class User extends ParseUser implements ParseCloneable {
     return response.isNotEmpty;
   }
 
-  addQuestion(Question question) => addRelation(keyAllQuestions, [question]);
+  addQuestion(Question question, Status status) async {
+    addRelation(keyAllQuestions, [question]);
+
+    final userStat = await (UserStat()
+          ..set(UserStat.keyQuestion, question.toPointer())
+          ..set(UserStat.keyStatus, status.val))
+        .save();
+    addRelation(keyUserStats, [userStat.result!]);
+
+    await save();
+  }
 
   double get timeDoneFraction {
     if (hearts == HEARTS_MAX) return 1;

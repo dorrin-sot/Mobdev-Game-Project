@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/models/user.dart';
+import 'package:mobdev_game_project/models/user_stats.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/appbar_related.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:tuple/tuple.dart';
@@ -81,7 +82,18 @@ class Question extends ParseObject implements ParseCloneable {
     final currentUser = Get.find<AppController>().currentUser!;
     print('submit result user : $currentUser');
 
-    for (var q in quizQs) currentUser.addQuestion(q);
+    // fixme in future record this in question page controller only and pass in to function or maybe a list userstats from begining
+    final statusList = List.filled(correctCount, Status.correct.val, growable: true)
+      ..addAll(List.filled(incorrectCount, Status.incorrect.val))
+      ..addAll(List.filled(timeoutCount, Status.timeout.val));
+
+    for (int i = 0; i < quizQs.length; i++) {
+      var question = quizQs[i];
+
+      // add to stats results
+      final status = StatusGetters.getStatus(statusList[i]);
+      await currentUser.addQuestion(question, status);
+    }
 
     int allQCount = correctCount + incorrectCount + timeoutCount;
     int cmpPoint = correctCount + incorrectCount * -2 + timeoutCount * -1;
