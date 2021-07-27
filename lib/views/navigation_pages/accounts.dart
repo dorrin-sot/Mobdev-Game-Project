@@ -4,199 +4,219 @@ import 'package:get/get.dart';
 import 'package:mobdev_game_project/main.dart';
 import 'package:mobdev_game_project/models/bar_chart_graph.dart';
 import 'package:mobdev_game_project/models/bar_chart_model.dart';
+import 'package:mobdev_game_project/models/subject.dart';
 import 'package:mobdev_game_project/models/user.dart';
+import 'package:mobdev_game_project/models/user_stats.dart';
 import 'package:mobdev_game_project/views/appbar_and_navbar/navbar_related.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:mobdev_game_project/views/common/laoding.dart';
 
 class AccountsPageProfile extends StatelessWidget {
   //const AccountsPageProfile({Key? key}) : super(key: key);
-  final List<BarChartModel> data = [
-    BarChartModel(
-      name: "ریاضی",
-      percent: 20,
-      color: charts.ColorUtil.fromDartColor(Color(0xFF47505F)),
-    ),
-    BarChartModel(
-      name: "علوم",
-      percent: 60,
-      color: charts.ColorUtil.fromDartColor(Colors.red),
-    ),
-    BarChartModel(
-      name: "فارسی",
-      percent: 100,
-      color: charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    BarChartModel(
-      name: "تاریخ",
-      percent: 45,
-      color: charts.ColorUtil.fromDartColor(Colors.yellow),
-    ),
-    BarChartModel(
-      name: "دینی",
-      percent: 63,
-      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent),
-    ),
-    BarChartModel(
-      name: "زبان",
-      percent: 100,
-      color: charts.ColorUtil.fromDartColor(Colors.pink),
-    ),
-    BarChartModel(
-      name: "عربی",
-      percent: 40,
-      color: charts.ColorUtil.fromDartColor(Colors.purple),
-    ),
-  ];
+  final List<BarChartModel> data = [];
   final appController = Get.find<AppController>();
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Column(
-          children: [
-            Padding(
-                padding: EdgeInsets.all(16.0),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(Get.width / 6),
-                  onTap: () => showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      final textStyle = TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      );
-                      final itemList = <ListTile>[
-                        ListTile(
-                          title: Text(
-                            'آپلود عکس پروفایل',
-                            textDirection: TextDirection.rtl,
-                            style: textStyle,
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: Subject.getAllFromDB(),
+        builder: (context, snap) {
+          if (!snap.hasData ||
+              (snap.data as List<Subject>).length == 0) {
+            return LoadingSupportPage("اطلاع");
+          } else {
+            List<Subject> allSubj = snap.data as List<Subject>;
+            return FutureBuilder(
+                future: UserStat.getUserStats(appController.currentUser!),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData ||
+                      (snapshot.data as List<UserStat>).length == 0) {
+                    return LoadingSupportPage("اطلاعات");
+                  } else {
+                    List<UserStat> allStats = snapshot.data as List<UserStat>;
+                    for (Subject subj in allSubj) {
+                      int correctCount = 0;
+                      int wrongOrTimeoutCount = 0;
+                      for (UserStat stat in allStats) {
+                        if (stat.question!.subject!.name == subj.name) {
+                          if (stat.status == Status.correct)
+                            correctCount++;
+                          else
+                            wrongOrTimeoutCount++;
+                        }
+                        double percent =
+                            (correctCount + wrongOrTimeoutCount == 0)
+                                ? 100
+                                : 100 *
+                                    (correctCount /
+                                        (correctCount + wrongOrTimeoutCount));
+                        data.add(BarChartModel(
+                            name: subj.name,
+                            percent: percent.round(),
+                            color:
+                                charts.ColorUtil.fromDartColor(Colors.green)));
+                      }
+                    }
+                    return Center(
+                      child: Column(
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: InkWell(
+                                borderRadius:
+                                    BorderRadius.circular(Get.width / 6),
+                                onTap: () => showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    final textStyle = TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    );
+                                    final itemList = <ListTile>[
+                                      ListTile(
+                                        title: Text(
+                                          'آپلود عکس پروفایل',
+                                          textDirection: TextDirection.rtl,
+                                          style: textStyle,
+                                        ),
+                                        leading: Icon(Icons.file_upload),
+                                        onTap: () {
+                                          // todo upload pfp
+                                        },
+                                      )
+                                    ];
+                                    // todo if current user has a pfp add options to edit or delete it
+                                    return Container(
+                                        child: ListView(
+                                      children: itemList,
+                                    ));
+                                  },
+                                ),
+                                child: Container(
+                                  width: Get.width / 3,
+                                  height: Get.width / 3,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/userPhoto.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(Get.width / 6 + 7.5)),
+                                    border: Border.all(
+                                      color: Colors.lightGreenAccent,
+                                      width: 7.5,
+                                    ),
+                                  ),
+                                ),
+                              )),
+                          Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              child: Text(
+                                appController.currentUser!.username!,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 30,
+                                    fontFamily: 'Lalezar',
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          BarChartGraph(data),
+                          ButtonBar(
+                            alignment: MainAxisAlignment.center,
+                            buttonPadding: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: Get.width / 4),
+                            children: [
+                              TextButton(
+                                child: SizedBox(
+                                  width: Get.width / 3,
+                                  child: Text(
+                                    'حذف اکانت',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Get.defaultDialog(
+                                    title: 'خطر!',
+                                    titleStyle: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                    content: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20, horizontal: 30),
+                                      child: Text(
+                                        'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.black),
+                                        textAlign: TextAlign.center,
+                                        textDirection: TextDirection.rtl,
+                                      ),
+                                    ),
+                                    textConfirm: 'حذف',
+                                    onConfirm: () async {
+                                      final currentUser =
+                                          Get.find<AppController>()
+                                              .currentUser!;
+                                      await currentUser.delete();
+                                      await currentUser.logout();
+                                      Get.back();
+                                      Get.find<NavBarController>()
+                                          .setCurrent('/account/login');
+                                    },
+                                    textCancel: 'بیخیال',
+                                  );
+                                },
+                              ),
+                              ElevatedButton(
+                                child: SizedBox(
+                                  width: Get.width / 3,
+                                  child: Text(
+                                    'لاگ اوت',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  Get.defaultDialog(
+                                    title: '',
+                                    titleStyle: TextStyle(fontSize: .01),
+                                    content: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20, horizontal: 30),
+                                      child: Text(
+                                        'مطمینی میخوای لاگ اوت کنی؟',
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.black),
+                                        textAlign: TextAlign.center,
+                                        textDirection: TextDirection.rtl,
+                                      ),
+                                    ),
+                                    textConfirm: 'لاگ اوت',
+                                    onConfirm: () async {
+                                      final currentUser =
+                                          Get.find<AppController>()
+                                              .currentUser!;
+                                      await currentUser.logout();
+                                      Get.back();
+                                      Get.find<NavBarController>()
+                                          .setCurrent('/account/login');
+                                    },
+                                    textCancel: 'بیخیال',
+                                  );
+                                },
+                              )
+                            ],
                           ),
-                          leading: Icon(Icons.file_upload),
-                          onTap: () {
-                            // todo upload pfp
-                          },
-                        )
-                      ];
-                      // todo if current user has a pfp add options to edit or delete it
-                      return Container(
-                          child: ListView(
-                        children: itemList,
-                      ));
-                    },
-                  ),
-                  child: Container(
-                    width: Get.width / 3,
-                    height: Get.width / 3,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/userPhoto.png'),
-                        fit: BoxFit.cover,
+                        ],
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(Get.width / 6 + 7.5)),
-                      border: Border.all(
-                        color: Colors.lightGreenAccent,
-                        width: 7.5,
-                      ),
-                    ),
-                  ),
-                )),
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                child: Text(
-                  appController.currentUser!.username!,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontFamily: 'Lalezar',
-                      fontWeight: FontWeight.bold),
-                )),BarChartGraph(data),
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              buttonPadding:
-                  EdgeInsets.symmetric(vertical: 20, horizontal: Get.width / 4),
-              children: [
-                TextButton(
-                  child: SizedBox(
-                    width: Get.width / 3,
-                    child: Text(
-                      'حذف اکانت',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.defaultDialog(
-                      title: 'خطر!',
-                      titleStyle: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                      content: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 30),
-                        child: Text(
-                          'مطمینی میخوای اکانتتو حذف کنی؟\nدقت کن که این عمل قابل بازگشت نیست!!',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                          textAlign: TextAlign.center,
-                          textDirection: TextDirection.rtl,
-                        ),
-                      ),
-                      textConfirm: 'حذف',
-                      onConfirm: () async {
-                        final currentUser =
-                            Get.find<AppController>().currentUser!;
-                        await currentUser.delete();
-                        await currentUser.logout();
-                        Get.back();
-                        Get.find<NavBarController>()
-                            .setCurrent('/account/login');
-                      },
-                      textCancel: 'بیخیال',
                     );
-                  },
-                ),
-                ElevatedButton(
-                  child: SizedBox(
-                    width: Get.width / 3,
-                    child: Text(
-                      'لاگ اوت',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  onPressed: () async {
-                    Get.defaultDialog(
-                      title: '',
-                      titleStyle: TextStyle(fontSize: .01),
-                      content: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 30),
-                        child: Text(
-                          'مطمینی میخوای لاگ اوت کنی؟',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                          textAlign: TextAlign.center,
-                          textDirection: TextDirection.rtl,
-                        ),
-                      ),
-                      textConfirm: 'لاگ اوت',
-                      onConfirm: () async {
-                        final currentUser =
-                            Get.find<AppController>().currentUser!;
-                        await currentUser.logout();
-                        Get.back();
-                        Get.find<NavBarController>()
-                            .setCurrent('/account/login');
-                      },
-                      textCancel: 'بیخیال',
-                    );
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
-      );
+                  }
+                });
+          }
+        });
+  }
 }
 
 class AccountsPageLogin extends StatelessWidget {
