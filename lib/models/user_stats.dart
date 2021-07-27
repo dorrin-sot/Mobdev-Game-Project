@@ -40,16 +40,20 @@ class UserStat extends ParseObject implements ParseCloneable {
           keyQuestion, 'objectId', questionsFromSubjectQuery);
     }
 
-    final userStatsResponse = await userStatsQuery.query();
-    final userStatsParseObjs = userStatsResponse.results!.cast<ParseObject>();
+    return await userStatsQuery.query().then((userStatsResponse) async {
+      if (!userStatsResponse.success || userStatsResponse.results == null)
+        return <UserStat>[];
 
-    final userStatsObjsList = <UserStat>[];
+      final userStatsParseObjs = userStatsResponse.results!.cast<ParseObject>();
 
-    for (var userStatParse in userStatsParseObjs) {
-      final userStatMap = userStatParse.getJsonMap();
-      userStatsObjsList.add(await UserStat.fromJsonn(userStatMap));
+      final userStatsObjsList = <UserStat>[];
+
+      for (var userStatParse in userStatsParseObjs) {
+        final userStatMap = userStatParse.getJsonMap();
+        userStatsObjsList.add(await UserStat.fromJsonn(userStatMap));
     }
-    return userStatsObjsList;
+      return userStatsObjsList;
+    });
   }
 
   @override

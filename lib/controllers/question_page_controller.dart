@@ -58,9 +58,6 @@ class QuestionPageController extends GetxController {
     print('res = ${questions!}');
     if (_results[0] > 0)
       Get.find<HeartController>().currentUser.useHeart();
-    else {
-      // todo go back or show a dialog for if there are no more questions left in DB
-    }
     return questions;
   }
 

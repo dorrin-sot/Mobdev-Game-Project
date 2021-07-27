@@ -29,7 +29,7 @@ class AccountsPageProfile extends StatelessWidget {
                 future: UserStat.getUserStats(appController.currentUser!),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
-                      (snapshot.data as List<UserStat>).length == 0) {
+                      snapshot.connectionState == ConnectionState.waiting) {
                     return LoadingSupportPage("اطلاعات ثانویه");
                   } else {
                     List<UserStat> allStats = snapshot.data as List<UserStat>;
