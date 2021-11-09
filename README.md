@@ -1,16 +1,17 @@
 # mobdev_game_project
 
-A new Flutter project.
+This project is a trivia game in which you compete with other like-minded players to prove you know the most useless trivia.
 
-## Getting Started
+## Licensing
 
-This project is a starting point for a Flutter application.
+### Code
 
-A few resources to get you started if this is your first Flutter project:
+All scripts and scene files are distributed under the [MIT license](LICENSE.md).
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+* Copyright: @dorrin-sot, @yasin459, @peyman-hme
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Assets
+
+All art assets (files in ``assets/sounds/``) are distributed under the [Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by/4.0/) license.
+
+* Artist: @peyman-hme
