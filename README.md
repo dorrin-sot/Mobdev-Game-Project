@@ -6,7 +6,7 @@ This project is a trivia game in which you compete with other like-minded player
 
 ### Code
 
-All scripts and scene files are distributed under the [MIT license](LICENSE.md).
+All scripts are distributed under the [MIT license](LICENSE.md).
 
 * Copyright: @dorrin-sot, @yasin459, @peyman-hme
 
